@@ -12,7 +12,6 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String description;
-    private Long userId;
     //private LocalDateTime createdAt;
     //private LocalDateTime updatedAt;
 
@@ -36,11 +35,4 @@ public class Comment {
         this.description = description;
     }
 
-    public Long getUserId() {
-        return userId;
-    }
-
-    void setUserId(Long userId) {
-        this.userId = userId;
-    }
 }

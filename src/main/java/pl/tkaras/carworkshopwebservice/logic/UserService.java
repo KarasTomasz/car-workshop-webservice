@@ -1,10 +1,9 @@
 package pl.tkaras.carworkshopwebservice.logic;
 
-import com.sun.xml.bind.v2.TODO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import pl.tkaras.carworkshopwebservice.model.dto.UserDto;
-import pl.tkaras.carworkshopwebservice.model.dto.UserDtoMapper;
+import pl.tkaras.carworkshopwebservice.model.mapper.impl.UserDtoMapper;
 import pl.tkaras.carworkshopwebservice.model.entity.Rank;
 import pl.tkaras.carworkshopwebservice.model.entity.User;
 import pl.tkaras.carworkshopwebservice.repository.UserRepository;
@@ -16,17 +15,19 @@ import java.util.List;
 public class UserService {
 
     private UserRepository userRepo;
+    private UserDtoMapper userDtoMapper;
 
-    public UserService(UserRepository userRepo) {
+    public UserService(UserRepository userRepo, UserDtoMapper userDtoMapper) {
         this.userRepo = userRepo;
+        this.userDtoMapper = userDtoMapper;
     }
 
     public UserDto getUserRank(String username){
-        return UserDtoMapper.mapToUserDto(userRepo.findByUsername(username));
+        return userDtoMapper.mapToDto(userRepo.findByUsername(username));
     }
 
     public List<UserDto> getAllUsers(){
-        return UserDtoMapper.mapToUserDtos(userRepo.findAll());
+        return userDtoMapper.mapToDtos(userRepo.findAll());
     }
 
     public ResponseEntity<?> addUser(User entity){

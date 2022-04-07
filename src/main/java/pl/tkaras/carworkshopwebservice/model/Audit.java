@@ -8,16 +8,16 @@ import java.time.LocalDateTime;
 @Embeddable
 public class Audit {
 
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private LocalDateTime createdOn;
+    private LocalDateTime updatedOn;
 
     @PrePersist
     void prePersist(){
-        this.createdAt = LocalDateTime.now();
+        this.createdOn = LocalDateTime.now();
     }
 
     @PreUpdate
     void preMarge(){
-        this.updatedAt = LocalDateTime.now();
+        this.updatedOn = LocalDateTime.now();
     }
 }

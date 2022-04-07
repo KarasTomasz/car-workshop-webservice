@@ -27,11 +27,11 @@ public class UserDto {
         this.userRank = userRank;
     }
 
-    static Builder builder(){
+    public static Builder builder(){
         return new Builder();
     }
 
-    static class Builder{
+    public static final class Builder{
         private String username;
         private Rank userRank;
 

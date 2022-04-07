@@ -25,12 +25,12 @@ public class UserController {
         return userService.getAllUsers();
     }
 
-    @PostMapping("")
+    @GetMapping("")
     public UserDto getUser(@RequestBody String username){
         return null;
     }
 
-    @PutMapping("")
+    @PostMapping("")
     public ResponseEntity addUser(@RequestBody User user){
         return userService.addUser(user);
     }

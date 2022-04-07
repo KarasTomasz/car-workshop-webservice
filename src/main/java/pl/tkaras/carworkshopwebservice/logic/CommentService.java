@@ -3,7 +3,7 @@ package pl.tkaras.carworkshopwebservice.logic;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import pl.tkaras.carworkshopwebservice.model.dto.CommentDto;
-import pl.tkaras.carworkshopwebservice.model.dto.CommentDtoMapper;
+import pl.tkaras.carworkshopwebservice.model.mapper.impl.CommentDtoMapper;
 import pl.tkaras.carworkshopwebservice.model.entity.Comment;
 import pl.tkaras.carworkshopwebservice.repository.CommentRepository;
 
@@ -14,23 +14,23 @@ import java.util.List;
 public class CommentService {
 
     private CommentRepository commentRepo;
+    private CommentDtoMapper commentDtoMapper;
 
-    public CommentService(CommentRepository commentRepo) {
+    public CommentService(CommentRepository commentRepo, CommentDtoMapper commentDtoMapper) {
         this.commentRepo = commentRepo;
+        this.commentDtoMapper = commentDtoMapper;
     }
 
     public CommentDto getSingleComment(Long id){
-        Comment comment = commentRepo.findById(id).orElseThrow();
-        CommentDto commentDto = CommentDtoMapper.mapToCommentDto(comment);
-        return commentDto;
+        return commentDtoMapper.mapToDto(commentRepo.findById(id).orElseThrow());
     }
 
     public List<CommentDto> getAllComments(){
-        return CommentDtoMapper.mapToCommentDtos(commentRepo.findAll());
+        return commentDtoMapper.mapToDtos(commentRepo.findAll());
     }
 
-    public Comment addComment(Comment entity){
-        return commentRepo.save(entity);
+    public CommentDto addComment(Comment entity){
+        return commentDtoMapper.mapToDto(commentRepo.save(entity));
     }
 
     @Transactional

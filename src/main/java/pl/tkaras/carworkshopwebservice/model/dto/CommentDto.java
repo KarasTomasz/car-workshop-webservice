@@ -29,7 +29,7 @@ public class CommentDto {
         this.userId = userId;
     }
 
-    static Builder builder(){
+    public static Builder builder(){
         return new Builder();
     }
 

@@ -1,7 +1,9 @@
 package pl.tkaras.carworkshopwebservice.controller;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.tkaras.carworkshopwebservice.logic.CarService;
+import pl.tkaras.carworkshopwebservice.model.dto.CarDto;
 import pl.tkaras.carworkshopwebservice.model.entity.Car;
 
 import java.util.List;
@@ -17,23 +19,23 @@ public class CarController {
     }
 
     @GetMapping("/{id}")
-    public Car getCar(@PathVariable Long id){
+    public CarDto getCar(@PathVariable Long id){
         return carService.getSingleCar(id);
     }
 
-    @GetMapping("")
-    public List<Car> getAllCars(){
+    @GetMapping("/all")
+    public List<CarDto> getAllCars(){
         return carService.gelAllCars();
     }
 
     @PostMapping("")
-    public Car addCar(@RequestBody Car entity){
+    public CarDto addCar(@RequestBody Car entity){
         return carService.addCar(entity);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteCar(Long id){
-        carService.deleteCar(id);
+    public ResponseEntity deleteCar(@PathVariable Long id){
+        return carService.deleteCar(id);
     }
 
 

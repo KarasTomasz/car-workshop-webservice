@@ -4,6 +4,7 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
+import java.util.List;
 
 @Entity
 public class User {
@@ -19,6 +20,11 @@ public class User {
     private String email;
     @Enumerated(value = EnumType.STRING)
     private Rank userRank;
+
+    @OneToMany(cascade = CascadeType.REMOVE)
+    private List<Comment> comments;
+    @OneToMany(cascade = CascadeType.REMOVE)
+    private List<Car> cars;
 
     Long getId() {
         return id;

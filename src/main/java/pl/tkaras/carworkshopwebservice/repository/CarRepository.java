@@ -8,8 +8,9 @@ import java.util.Optional;
 public interface CarRepository {
 
     List<Car> findAll();
-    Car save(Car entity);
     Optional<Car> findById(Long aLong);
+    boolean existsById(Long id);
+    Car save(Car entity);
     void deleteById(Long aLong);
 
 }
