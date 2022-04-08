@@ -7,6 +7,7 @@ import pl.tkaras.carworkshopwebservice.model.mapper.impl.UserDtoMapper;
 import pl.tkaras.carworkshopwebservice.model.entity.Rank;
 import pl.tkaras.carworkshopwebservice.model.entity.User;
 import pl.tkaras.carworkshopwebservice.repository.UserRepository;
+import pl.tkaras.carworkshopwebservice.security.ApplicationUserRole;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -41,11 +42,11 @@ public class UserService {
         return ResponseEntity.ok().build();
     }
 
-    @Transactional
-    public ResponseEntity<?> updateUser(String username, Rank rank){
+    //@Transactional
+    public ResponseEntity<?> updateUser(String username, String role){
         if(userRepo.existsByUsername(username)){
             User user = userRepo.findByUsername(username);
-            user.setUserRank(rank);
+            user.setRole(role);
             userRepo.save(user);
         }
         else{

@@ -7,6 +7,7 @@ import pl.tkaras.carworkshopwebservice.logic.UserService;
 import pl.tkaras.carworkshopwebservice.model.dto.UserDto;
 import pl.tkaras.carworkshopwebservice.model.entity.Rank;
 import pl.tkaras.carworkshopwebservice.model.entity.User;
+import pl.tkaras.carworkshopwebservice.security.ApplicationUserRole;
 
 import java.util.List;
 
@@ -36,8 +37,8 @@ public class UserController {
     }
 
     @PatchMapping("")
-    public ResponseEntity updateUserRank(@RequestBody String username, Rank rank){
-        return userService.updateUser(username, rank);
+    public ResponseEntity updateUserRank(@RequestBody String username, String role){
+        return userService.updateUser(username, role);
     }
 
     @DeleteMapping("/{id}")

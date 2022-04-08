@@ -25,7 +25,7 @@ public class UserDtoMapper implements DtoMapper<User, UserDto> {
     public UserDto mapToDto(User user) {
         return UserDto.builder()
                 .username(user.getUsername())
-                .userRank(user.getUserRank())
+                .userRank(user.getRole())
                 .build();
     }
 }

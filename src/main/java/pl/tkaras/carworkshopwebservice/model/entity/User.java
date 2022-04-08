@@ -1,10 +1,16 @@
 package pl.tkaras.carworkshopwebservice.model.entity;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
+import pl.tkaras.carworkshopwebservice.security.ApplicationUserPermission;
+import pl.tkaras.carworkshopwebservice.security.ApplicationUserRole;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class User {
@@ -12,14 +18,21 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String firstName;
-    private String LastName;
+    //private String firstName;
+    //private String LastName;
+    @Column(nullable = false, unique = true)
     private String username;
     private String password;
     @Email
     private String email;
-    @Enumerated(value = EnumType.STRING)
-    private Rank userRank;
+    //@Enumerated(value = EnumType.STRING)
+    private String role;
+
+    private boolean isAccountNonExpired;
+    private boolean isAccountNonLocked;
+    private boolean isCredentialsNonExpired;
+    private boolean isEnabled;
+
 
     @OneToMany(cascade = CascadeType.REMOVE)
     private List<Comment> comments;
@@ -34,7 +47,7 @@ public class User {
         this.id = id;
     }
 
-    public String getFirstName() {
+   /* public String getFirstName() {
         return firstName;
     }
 
@@ -48,7 +61,7 @@ public class User {
 
     public void setLastName(String lastName) {
         LastName = lastName;
-    }
+    }*/
 
     public String getUsername() {
         return username;
@@ -74,11 +87,44 @@ public class User {
         this.email = email;
     }
 
-    public Rank getUserRank() {
-        return userRank;
+    public String getRole() {
+        return role;
     }
 
-    public void setUserRank(Rank userRank) {
-        this.userRank = userRank;
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+
+    public boolean isAccountNonExpired() {
+        return isAccountNonExpired;
+    }
+
+    public void setAccountNonExpired(boolean accountNonExpired) {
+        isAccountNonExpired = accountNonExpired;
+    }
+
+    public boolean isAccountNonLocked() {
+        return isAccountNonLocked;
+    }
+
+    public void setAccountNonLocked(boolean accountNonLocked) {
+        isAccountNonLocked = accountNonLocked;
+    }
+
+    public boolean isCredentialsNonExpired() {
+        return isCredentialsNonExpired;
+    }
+
+    public void setCredentialsNonExpired(boolean credentialsNonExpired) {
+        isCredentialsNonExpired = credentialsNonExpired;
+    }
+
+    public boolean isEnabled() {
+        return isEnabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        isEnabled = enabled;
     }
 }

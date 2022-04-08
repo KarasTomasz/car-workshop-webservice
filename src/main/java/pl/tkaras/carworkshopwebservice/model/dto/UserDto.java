@@ -9,7 +9,7 @@ import javax.validation.constraints.Email;
 public class UserDto {
 
     private String username;
-    private Rank userRank;
+    private String role;
 
     public String getUsername() {
         return username;
@@ -19,12 +19,12 @@ public class UserDto {
         this.username = username;
     }
 
-    public Rank getUserRank() {
-        return userRank;
+    public String getUserRank() {
+        return role;
     }
 
-    public void setUserRank(Rank userRank) {
-        this.userRank = userRank;
+    public void setUserRank(String role) {
+        this.role = role;
     }
 
     public static Builder builder(){
@@ -33,22 +33,22 @@ public class UserDto {
 
     public static final class Builder{
         private String username;
-        private Rank userRank;
+        private String role;
 
         public Builder username(String username){
             this.username = username;
             return this;
         }
 
-        public Builder userRank(Rank userRank){
-            this.userRank = userRank;
+        public Builder userRank(String role){
+            this.role = role;
             return this;
         }
 
         public UserDto build(){
             UserDto userDto = new UserDto();
             userDto.username = username;
-            userDto.userRank = userRank;
+            userDto.role = role;
             return userDto;
         }
 
