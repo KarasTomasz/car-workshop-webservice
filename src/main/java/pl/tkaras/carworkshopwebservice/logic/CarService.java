@@ -1,6 +1,7 @@
 package pl.tkaras.carworkshopwebservice.logic;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import pl.tkaras.carworkshopwebservice.model.dto.CarDto;
 import pl.tkaras.carworkshopwebservice.model.mapper.impl.CarDtoMapper;
@@ -21,9 +22,9 @@ public class CarService {
 
     public CarDto getSingleCar(Long id){
         if(!carRepo.existsById(id)){
-            //return ResponseEntity.notFound().build();
+            throw new UsernameNotFoundException("User with given id does not exists");
         }
-        return new CarDtoMapper().mapToDto(carRepo.findById(id).orElseThrow());
+        return new CarDtoMapper().mapToDto(carRepo.findById(id).get());
     }
 
     public List<CarDto> gelAllCars(){

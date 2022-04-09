@@ -1,6 +1,7 @@
 package pl.tkaras.carworkshopwebservice.logic;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import pl.tkaras.carworkshopwebservice.model.dto.CommentDto;
 import pl.tkaras.carworkshopwebservice.model.mapper.impl.CommentDtoMapper;
@@ -22,7 +23,10 @@ public class CommentService {
     }
 
     public CommentDto getSingleComment(Long id){
-        return commentDtoMapper.mapToDto(commentRepo.findById(id).orElseThrow());
+        if(!commentRepo.existsById(id)){
+            throw new UsernameNotFoundException("User with given id does not exists");
+        }
+        return commentDtoMapper.mapToDto(commentRepo.findById(id).get());
     }
 
     public List<CommentDto> getAllComments(){
@@ -33,10 +37,10 @@ public class CommentService {
         return commentDtoMapper.mapToDto(commentRepo.save(entity));
     }
 
-    @Transactional
+    //@Transactional
     public ResponseEntity<?> updateComment(Long id, Comment entity){
         if(commentRepo.existsById(id)){
-            Comment comment = commentRepo.findById(id).orElseThrow();
+            Comment comment = commentRepo.findById(id).get();
             comment.setDescription(entity.getDescription());
             commentRepo.save(comment);
         }

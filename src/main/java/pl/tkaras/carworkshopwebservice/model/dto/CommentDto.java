@@ -1,10 +1,5 @@
 package pl.tkaras.carworkshopwebservice.model.dto;
 
-import pl.tkaras.carworkshopwebservice.model.entity.Comment;
-import pl.tkaras.carworkshopwebservice.model.entity.User;
-
-import java.time.LocalDateTime;
-
 public class CommentDto {
 
     private String description;

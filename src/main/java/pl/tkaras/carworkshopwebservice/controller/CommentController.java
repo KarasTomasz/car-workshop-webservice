@@ -19,14 +19,15 @@ public class CommentController {
         this.commentService = commentService;
     }
 
+    //@PreAuthorize("hasAnyRole('ROLE_CLIENT', 'ROLE_MODERATOR', 'ROLE_ADMIN')")
     @GetMapping("/all")
-    @PreAuthorize("hasAnyRole('ROLE_CLIENT', 'ROLE_MODERATOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('comment:read')")
     public List<CommentDto> getComments(){
         return commentService.getAllComments();
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_CLIENT', 'ROLE_MODERATOR', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('comment:read')")
     public CommentDto getComment(@PathVariable Long id){
         return commentService.getSingleComment(id);
     }
@@ -42,7 +43,6 @@ public class CommentController {
     public ResponseEntity updateComment(@PathVariable Long id, @RequestBody Comment comment){
         return commentService.updateComment(id, comment);
     }
-
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('comment:delete')")

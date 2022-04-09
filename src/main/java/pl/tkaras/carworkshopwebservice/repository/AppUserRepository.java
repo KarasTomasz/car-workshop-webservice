@@ -1,18 +1,18 @@
 package pl.tkaras.carworkshopwebservice.repository;
 
-import pl.tkaras.carworkshopwebservice.model.entity.User;
+import pl.tkaras.carworkshopwebservice.model.entity.AppUser;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface UserRepository {
+public interface AppUserRepository {
 
-    Optional<User> findById(Long id);
-    User findByUsername(String username);
+    Optional<AppUser> findById(Long id);
+    Optional<AppUser> findByUsername(String username);
     boolean existsById(Long id);
     boolean existsByUsername(String username);
-    List<User> findAll();
-    User save(User entity);
+    List<AppUser> findAll();
+    AppUser save(AppUser entity);
     void deleteById(Long id);
     void deleteByUsername(String username);
 

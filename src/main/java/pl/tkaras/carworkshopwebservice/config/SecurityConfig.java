@@ -2,34 +2,36 @@ package pl.tkaras.carworkshopwebservice.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import pl.tkaras.carworkshopwebservice.security.auth.AuthUserDetailsService;
 
 import java.util.concurrent.TimeUnit;
-
-import static pl.tkaras.carworkshopwebservice.security.ApplicationUserRole.ADMIN;
-import static pl.tkaras.carworkshopwebservice.security.ApplicationUserRole.CLIENT;
 
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    private final PasswordEncoder passwordEncoder;
+    private final AuthUserDetailsService authUserDetailsService;
+
+    public SecurityConfig(PasswordEncoder passwordEncoder, AuthUserDetailsService authUserDetailsService) {
+        this.passwordEncoder = passwordEncoder;
+        this.authUserDetailsService = authUserDetailsService;
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/", "/console/**")
-                .permitAll()
+                .antMatchers("/", "/console/**","/user/**")
+                    .permitAll()
+                //.antMatchers("/comment/all").hasRole(ADMIN.name())
                 .anyRequest()
                 .authenticated()
                 .and()
@@ -37,7 +39,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .rememberMe()
                     .tokenValiditySeconds((int)TimeUnit.DAYS.toSeconds(21))
-                    .key("somethingverysecured")
+                    .key("uniqueAndSecret")
+                .userDetailsService(authUserDetailsService)
                 .and()
                 .headers().frameOptions().disable() //it fix h2 console problem
                 .and()
@@ -45,29 +48,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    @Bean
-    protected UserDetailsService userDetailsService() {
-        UserDetails user1 = User.builder()
-                .username("jan")
-                .password(new BCryptPasswordEncoder(10).encode("password"))
-                //.roles("USER")
-                .authorities(ADMIN.getGrantedAuthority())
-                .build();
-
-        UserDetails user2 = User.builder()
-                .username("anna")
-                .password(new BCryptPasswordEncoder(10).encode("password"))
-                .authorities(CLIENT.getGrantedAuthority())
-                .build();
-
-        return new InMemoryUserDetailsManager(
-                user1,
-                user2
-        );
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(daoAuthenticationProvider());
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(10);
+    public DaoAuthenticationProvider daoAuthenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setPasswordEncoder(passwordEncoder);
+        provider.setUserDetailsService(authUserDetailsService);
+        return provider;
     }
+
+
 }

@@ -1,6 +1,5 @@
 package pl.tkaras.carworkshopwebservice.security;
 
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.HashSet;
@@ -8,23 +7,26 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static pl.tkaras.carworkshopwebservice.security.ApplicationUserPermission.*;
+import static pl.tkaras.carworkshopwebservice.security.AppUserPermission.*;
 
-public enum ApplicationUserRole {
+public enum AppUserRole {
     CLIENT(Stream.of(COMMENT_READ, COMMENT_WRITE)
             .collect(Collectors.toCollection(HashSet::new))),
-    MODERATOR(Stream.of(COMMENT_READ, COMMENT_WRITE, COMMENT_DELETE, CAR_ADD, CAR_DELETE)
+    MODERATOR(Stream.of(COMMENT_READ, COMMENT_WRITE, COMMENT_DELETE,
+            CAR_READ, CAR_ADD, CAR_DELETE)
             .collect(Collectors.toCollection(HashSet::new))),
-    ADMIN(Stream.of(COMMENT_READ, COMMENT_WRITE, COMMENT_DELETE, CAR_ADD, CAR_DELETE, USER_ADD, USER_DELETE)
+    ADMIN(Stream.of(COMMENT_READ, COMMENT_WRITE, COMMENT_DELETE,
+            CAR_READ, CAR_ADD, CAR_DELETE,
+            USER_READ, USER_ADD, USER_DELETE)
             .collect(Collectors.toCollection(HashSet::new)));
 
-    private final HashSet<ApplicationUserPermission> permissions;
+    private final HashSet<AppUserPermission> permissions;
 
-    ApplicationUserRole(HashSet<ApplicationUserPermission> permissions) {
+    AppUserRole(HashSet<AppUserPermission> permissions) {
         this.permissions = permissions;
     }
 
-    public HashSet<ApplicationUserPermission> getPermissions(){
+    public HashSet<AppUserPermission> getPermissions(){
         return permissions;
     }
 
@@ -35,4 +37,5 @@ public enum ApplicationUserRole {
         grantedPermissions.add(new SimpleGrantedAuthority("ROLE_" + this.name()));
         return grantedPermissions;
     }
+
 }

@@ -3,23 +3,24 @@ package pl.tkaras.carworkshopwebservice.security.auth;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import pl.tkaras.carworkshopwebservice.model.entity.User;
-import pl.tkaras.carworkshopwebservice.repository.UserRepository;
+import org.springframework.stereotype.Service;
+import pl.tkaras.carworkshopwebservice.model.entity.AppUser;
+import pl.tkaras.carworkshopwebservice.repository.AppUserRepository;
 
+@Service
 public class AuthUserDetailsService implements UserDetailsService {
 
-    private UserRepository userRepository;
+    private final AppUserRepository appUserRepository;
 
-    public AuthUserDetailsService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public AuthUserDetailsService(AppUserRepository appUserRepository) {
+        this.appUserRepository = appUserRepository;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username);
-        if(user == null){
-            throw  new UsernameNotFoundException("User with given username does not exists");
-        }
-        return new AuthUserDetails(user);
+        AppUser appUser = appUserRepository
+                .findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(String.format("Username %s not found", username)));
+        return new AuthUserDetails(appUser);
     }
 }
