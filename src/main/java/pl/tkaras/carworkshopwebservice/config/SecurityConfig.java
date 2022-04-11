@@ -1,6 +1,5 @@
 package pl.tkaras.carworkshopwebservice.config;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -12,27 +11,24 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import pl.tkaras.carworkshopwebservice.security.auth.AuthUserDetailsService;
+import pl.tkaras.carworkshopwebservice.security.jwt.JwtTokenVerifier;
 import pl.tkaras.carworkshopwebservice.security.jwt.JwtUsernameAndPasswordAuthenticationFilter;
-
-import java.util.concurrent.TimeUnit;
 
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Value("${jwt.tokenSecretKey}")
-    private String tokenSecretKey;
-
-    @Value("${jwt.expirationTime}")
-    private long expirationTime;
-
     private final PasswordEncoder passwordEncoder;
     private final AuthUserDetailsService authUserDetailsService;
+    private final JwtConfig jwtConfig;
 
-    public SecurityConfig(PasswordEncoder passwordEncoder, AuthUserDetailsService authUserDetailsService) {
+    public SecurityConfig(PasswordEncoder passwordEncoder,
+                          AuthUserDetailsService authUserDetailsService,
+                          JwtConfig jwtConfig) {
         this.passwordEncoder = passwordEncoder;
         this.authUserDetailsService = authUserDetailsService;
+        this.jwtConfig = jwtConfig;
     }
 
     @Override
@@ -41,7 +37,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement()
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager(), tokenSecretKey, expirationTime))
+                .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager(), jwtConfig))
+                .addFilterAfter(new JwtTokenVerifier(jwtConfig), JwtUsernameAndPasswordAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/", "/console/**")
                     .permitAll()

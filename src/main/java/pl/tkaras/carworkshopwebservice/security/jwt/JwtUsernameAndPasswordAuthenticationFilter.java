@@ -3,13 +3,12 @@ package pl.tkaras.carworkshopwebservice.security.jwt;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.stereotype.Component;
+import pl.tkaras.carworkshopwebservice.config.JwtConfig;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -20,19 +19,13 @@ import java.util.Date;
 
 public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    private static final String TOKEN_HEADER = "Authorization";
-    private static final String TOKEN_PREFIX = "Bearer ";
-
-    private String tokenSecretKey;
-    private long expirationTime;
-
-
     private final AuthenticationManager authenticationManager;
+    private final JwtConfig jwtConfig;
 
-    public JwtUsernameAndPasswordAuthenticationFilter(AuthenticationManager authenticationManager, String tokenSecretKey, long expirationTime) {
+    public JwtUsernameAndPasswordAuthenticationFilter(AuthenticationManager authenticationManager,
+                                                      JwtConfig jwtConfig) {
         this.authenticationManager = authenticationManager;
-        this.tokenSecretKey = tokenSecretKey;
-        this.expirationTime = expirationTime;
+        this.jwtConfig = jwtConfig;
     }
 
     @Override
@@ -66,12 +59,12 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
                 .setSubject(authResult.getName()) //header
                 .claim("authorities", authResult.getAuthorities()) //body
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
-                .signWith(Keys.hmacShaKeyFor(tokenSecretKey.getBytes())) //sign
+                .setExpiration(new Date(System.currentTimeMillis() + jwtConfig.getExpirationTime()))
+                .signWith(Keys.hmacShaKeyFor(jwtConfig.getTokenSecretKey().getBytes())) //sign
                 .compact();
 
         //send token to client
-        response.addHeader(TOKEN_HEADER, TOKEN_PREFIX + token);
+        response.addHeader(jwtConfig.getTokenHeader(), jwtConfig.getTokenPrefix() + token);
 
     }
 
