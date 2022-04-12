@@ -21,29 +21,31 @@ public class CarService {
     }
 
     public CarDto getSingleCar(Long id){
-        if(!carRepo.existsById(id)){
-            throw new UsernameNotFoundException("User with given id does not exists");
+        if(carRepo.existsById(id)){
+            return new CarDtoMapper().mapToDto(carRepo.findById(id)
+                    .orElseThrow(() -> new IllegalStateException(String.format("Problem with given id %s", id))));
         }
-        return new CarDtoMapper().mapToDto(carRepo.findById(id).get());
+        throw new UsernameNotFoundException(String.format("User with id %s not found", id));
     }
 
     public List<CarDto> gelAllCars(){
         return carDtoMapper.mapToDtos(carRepo.findAll());
     }
 
-    public CarDto addCar(Car entity){
-        return carDtoMapper.mapToDto(carRepo.save(entity));
+    public ResponseEntity addCar(Car entity){
+        if(carRepo.existsById(entity.getId())){
+            carDtoMapper.mapToDto(carRepo.save(entity));
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 
     public ResponseEntity deleteCar(Long id){
         if(carRepo.existsById(id)){
             carRepo.deleteById(id);
+            return ResponseEntity.ok().build();
         }
-        else{
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok().build();
+        return ResponseEntity.notFound().build();
     }
-
 
 }

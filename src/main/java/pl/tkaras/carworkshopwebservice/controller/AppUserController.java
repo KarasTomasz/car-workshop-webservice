@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pl.tkaras.carworkshopwebservice.logic.AppUserService;
+import pl.tkaras.carworkshopwebservice.logic.RegistrationService;
 import pl.tkaras.carworkshopwebservice.model.dto.AppUserDto;
 import pl.tkaras.carworkshopwebservice.model.entity.AppUser;
 
@@ -13,10 +14,13 @@ import java.util.List;
 @RequestMapping("/user")
 public class AppUserController {
 
-    private AppUserService appUserService;
+    private final AppUserService appUserService;
+    private final RegistrationService registrationService;
 
-    public AppUserController(AppUserService appUserService) {
+    public AppUserController(AppUserService appUserService, RegistrationService registrationService) {
         this.appUserService = appUserService;
+        this.registrationService = registrationService;
+        ;
     }
 
     @GetMapping("/all")
@@ -31,14 +35,18 @@ public class AppUserController {
         return null;
     }
 
-    @PostMapping("")
-    @PreAuthorize("hasAuthority('user:add')")
+    @PostMapping("/registration")
     public ResponseEntity addAppUser(@RequestBody AppUser appUser){
-        return appUserService.addUser(appUser);
+        return registrationService.register(appUser);
+    }
+
+    @GetMapping(path = "/registration/confirm")
+    public ResponseEntity confirm(@RequestParam("token") String token) {
+        return registrationService.confirm(token);
     }
 
     @PatchMapping("")
-    @PreAuthorize("hasAuthority('user:add')")
+    @PreAuthorize("hasAuthority('user:update')")
     public ResponseEntity updateAppUserRole(@RequestBody AppUser appUser){
         return appUserService.updateUser(appUser);
     }

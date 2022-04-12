@@ -2,10 +2,11 @@ package pl.tkaras.carworkshopwebservice.model.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @Entity
-@Table(name = "user")
+@Table(name = "appUser")
 public class AppUser {
 
     @Id
@@ -13,16 +14,22 @@ public class AppUser {
     private Long id;
     @Column(nullable = false, unique = true)
     private String username;
+    @Column(nullable = false)
     private String password;
     @Email
+    @Column(nullable = false)
     private String email;
+    private String firstname;
+    private String lastname;
+    private String street;
+    private String zipCode;
+    private String city;
     //@Enumerated(value = EnumType.STRING)
-    private String role;
-
-    private boolean isAccountNonExpired;
-    private boolean isAccountNonLocked;
-    private boolean isCredentialsNonExpired;
-    private boolean isEnabled;
+    private String role = "CLIENT";
+    private boolean isAccountNonExpired = false;
+    private boolean isAccountNonLocked = false;
+    private boolean isCredentialsNonExpired = false;
+    private boolean isEnabled = false;
 
     @OneToMany(cascade = CascadeType.REMOVE)
     private List<Comment> comments;
@@ -69,7 +76,6 @@ public class AppUser {
         this.role = role;
     }
 
-
     public boolean isAccountNonExpired() {
         return isAccountNonExpired;
     }
@@ -101,4 +107,45 @@ public class AppUser {
     public void setEnabled(boolean enabled) {
         isEnabled = enabled;
     }
+
+    public String getFirstname() {
+        return firstname;
+    }
+
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
+
+    public String getStreet() {
+        return street;
+    }
+
+    public void setStreet(String street) {
+        this.street = street;
+    }
+
+    public String getZipCode() {
+        return zipCode;
+    }
+
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
 }

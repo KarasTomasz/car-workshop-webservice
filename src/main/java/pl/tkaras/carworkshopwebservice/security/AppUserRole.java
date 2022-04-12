@@ -17,7 +17,7 @@ public enum AppUserRole {
             .collect(Collectors.toCollection(HashSet::new))),
     ADMIN(Stream.of(COMMENT_READ, COMMENT_WRITE, COMMENT_DELETE,
             CAR_READ, CAR_ADD, CAR_DELETE,
-            USER_READ, USER_ADD, USER_DELETE)
+            USER_READ, USER_UPDATE, USER_DELETE)
             .collect(Collectors.toCollection(HashSet::new)));
 
     private final HashSet<AppUserPermission> permissions;

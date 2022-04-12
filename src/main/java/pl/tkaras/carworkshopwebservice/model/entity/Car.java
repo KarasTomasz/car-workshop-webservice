@@ -19,7 +19,7 @@ public class Car {
     private Car() {
     }
 
-    long getId() {
+    public long getId() {
         return id;
     }
 

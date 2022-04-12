@@ -1,7 +1,10 @@
 package pl.tkaras.carworkshopwebservice.repository;
 
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import pl.tkaras.carworkshopwebservice.model.entity.AppUser;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,5 +18,10 @@ public interface AppUserRepository {
     AppUser save(AppUser entity);
     void deleteById(Long id);
     void deleteByUsername(String username);
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE AppUser au SET au.isEnabled = TRUE WHERE au.username = ?1")
+    boolean enableAppUser(String username);
 
 }

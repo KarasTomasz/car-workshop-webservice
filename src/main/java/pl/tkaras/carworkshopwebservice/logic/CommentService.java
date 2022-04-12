@@ -23,10 +23,10 @@ public class CommentService {
     }
 
     public CommentDto getSingleComment(Long id){
-        if(!commentRepo.existsById(id)){
-            throw new UsernameNotFoundException("User with given id does not exists");
+        if(commentRepo.existsById(id)){
+            return commentDtoMapper.mapToDto(commentRepo.findById(id).get());
         }
-        return commentDtoMapper.mapToDto(commentRepo.findById(id).get());
+        throw new UsernameNotFoundException(String.format("User with id %s not found", id));
     }
 
     public List<CommentDto> getAllComments(){
@@ -37,26 +37,22 @@ public class CommentService {
         return commentDtoMapper.mapToDto(commentRepo.save(entity));
     }
 
-    //@Transactional
-    public ResponseEntity<?> updateComment(Long id, Comment entity){
+    public ResponseEntity updateComment(Long id, Comment entity){
         if(commentRepo.existsById(id)){
             Comment comment = commentRepo.findById(id).get();
             comment.setDescription(entity.getDescription());
             commentRepo.save(comment);
+            return ResponseEntity.ok().build();
         }
-        else{
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.notFound().build();
     }
 
-    public ResponseEntity<?> deleteComment(Long id){
+    public ResponseEntity deleteComment(Long id){
         if(commentRepo.existsById(id)){
             commentRepo.deleteById(id);
+            return ResponseEntity.ok().build();
         }
-        else{
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok().build();
+        return ResponseEntity.notFound().build();
+
     }
 }

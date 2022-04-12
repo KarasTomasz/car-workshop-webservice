@@ -8,7 +8,7 @@ public enum AppUserPermission {
     CAR_ADD("car:add"),
     CAR_DELETE("car:delete"),
     USER_READ("user:read"),
-    USER_ADD("user:add"),
+    USER_UPDATE("user:update"),
     USER_DELETE("user:delete");
 
     private final String permission;

@@ -33,7 +33,7 @@ public class CarController {
 
     @PostMapping("")
     @PreAuthorize("hasAuthority('car:add')")
-    public CarDto addCar(@RequestBody Car entity){
+    public ResponseEntity addCar(@RequestBody Car entity){
         return carService.addCar(entity);
     }
 
