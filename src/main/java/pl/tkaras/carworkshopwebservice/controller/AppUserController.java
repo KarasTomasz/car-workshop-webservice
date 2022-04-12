@@ -20,7 +20,6 @@ public class AppUserController {
     public AppUserController(AppUserService appUserService, RegistrationService registrationService) {
         this.appUserService = appUserService;
         this.registrationService = registrationService;
-        ;
     }
 
     @GetMapping("/all")
@@ -40,7 +39,7 @@ public class AppUserController {
         return registrationService.register(appUser);
     }
 
-    @GetMapping(path = "/registration/confirm")
+    @GetMapping(path = "/confirm")
     public ResponseEntity confirm(@RequestParam("token") String token) {
         return registrationService.confirm(token);
     }

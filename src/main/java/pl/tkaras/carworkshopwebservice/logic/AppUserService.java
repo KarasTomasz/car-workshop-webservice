@@ -84,8 +84,8 @@ public class AppUserService {
         return ResponseEntity.notFound().build();
     }
 
-    public boolean enableAppUser(String username){
-        return appUserRepo.enableAppUser(username);
+    public void enableAppUser(String username){
+        appUserRepo.enableAppUser(username);
     }
 
 }

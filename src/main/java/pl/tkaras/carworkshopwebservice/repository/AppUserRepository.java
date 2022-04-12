@@ -21,7 +21,12 @@ public interface AppUserRepository {
 
     @Transactional
     @Modifying
-    @Query("UPDATE AppUser au SET au.isEnabled = TRUE WHERE au.username = ?1")
-    boolean enableAppUser(String username);
+    @Query("UPDATE AppUser au SET " +
+            "au.isEnabled = true, " +
+            "au.isAccountNonExpired = true, " +
+            "au.isAccountNonLocked = true," +
+            "au.isCredentialsNonExpired = true" +
+            " WHERE au.username = ?1")
+    void enableAppUser(String username);
 
 }
