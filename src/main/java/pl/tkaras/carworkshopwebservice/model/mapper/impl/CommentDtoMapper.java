@@ -24,6 +24,8 @@ public class CommentDtoMapper implements DtoMapper<Comment, CommentDto> {
     public CommentDto mapToDto(Comment comment) {
         return CommentDto.builder()
                 .description(comment.getDescription())
+                .username(comment.getAppUser().getUsername())
+                .createdOn(comment.getCreatedOn())
                 .build();
     }
 }
