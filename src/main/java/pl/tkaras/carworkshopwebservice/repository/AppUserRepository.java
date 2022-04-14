@@ -15,7 +15,7 @@ public interface AppUserRepository {
     boolean existsById(Long id);
     boolean existsByUsername(String username);
     List<AppUser> findAll();
-    AppUser save(AppUser entity);
+    AppUser save(AppUser appUser);
     void deleteById(Long id);
     void deleteByUsername(String username);
 
