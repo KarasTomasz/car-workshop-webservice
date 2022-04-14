@@ -1,9 +1,12 @@
 package pl.tkaras.carworkshopwebservice.model.dto;
 
+import java.time.LocalDateTime;
+
 public class CommentDto {
 
     private String description;
-    private Long userId;
+    private String username;
+    private LocalDateTime createdOn;
 
     private CommentDto(){
     }
@@ -16,12 +19,20 @@ public class CommentDto {
         this.description = description;
     }
 
-    public Long getUserId() {
-        return userId;
+    public String getUsername() {
+        return username;
     }
 
-    void setUserId(Long userId) {
-        this.userId = userId;
+    void setUsername(String userName) {
+        this.username = userName;
+    }
+
+    public LocalDateTime getCreatedOn() {
+        return createdOn;
+    }
+
+    void setCreatedOn(LocalDateTime createdOn) {
+        this.createdOn = createdOn;
     }
 
     public static Builder builder(){
@@ -31,22 +42,29 @@ public class CommentDto {
     public static final class Builder {
 
         private String description;
-        private Long userId;
+        private String username;
+        private LocalDateTime createdOn;
 
         public Builder description(String description){
             this.description = description;
             return this;
         }
 
-        public Builder userId(Long userId){
-            this.userId = userId;
+        public Builder username(String username){
+            this.username = username;
+            return this;
+        }
+
+        public Builder createdOn(LocalDateTime createdOn){
+            this.createdOn = createdOn;
             return this;
         }
 
         public CommentDto build(){
             CommentDto commentDto = new CommentDto();
             commentDto.description = description;
-            commentDto.userId = userId;
+            commentDto.username = username;
+            commentDto.createdOn = createdOn;
             return commentDto;
         }
     }
