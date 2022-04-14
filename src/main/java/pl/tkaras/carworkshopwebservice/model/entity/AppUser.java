@@ -6,7 +6,6 @@ import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @Entity
-@Table(name = "appUser")
 public class AppUser {
 
     @Id
@@ -30,11 +29,6 @@ public class AppUser {
     private boolean isAccountNonLocked = false;
     private boolean isCredentialsNonExpired = false;
     private boolean isEnabled = false;
-
-    @OneToMany(cascade = CascadeType.REMOVE)
-    private List<Comment> comments;
-    @OneToMany(cascade = CascadeType.REMOVE)
-    private List<Car> cars;
 
     Long getId() {
         return id;
