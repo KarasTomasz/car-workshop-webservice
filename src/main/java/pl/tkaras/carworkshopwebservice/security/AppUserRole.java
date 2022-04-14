@@ -10,14 +10,16 @@ import java.util.stream.Stream;
 import static pl.tkaras.carworkshopwebservice.security.AppUserPermission.*;
 
 public enum AppUserRole {
-    CLIENT(Stream.of(COMMENT_READ, COMMENT_WRITE)
+    CLIENT(Stream.of(COMMENT_READ, COMMENT_WRITE,
+                    USER_READ)
             .collect(Collectors.toCollection(HashSet::new))),
     MODERATOR(Stream.of(COMMENT_READ, COMMENT_WRITE, COMMENT_DELETE,
-            CAR_READ, CAR_ADD, CAR_DELETE)
+                    CAR_READ, CAR_ADD, CAR_DELETE,
+                    USER_READ)
             .collect(Collectors.toCollection(HashSet::new))),
     ADMIN(Stream.of(COMMENT_READ, COMMENT_WRITE, COMMENT_DELETE,
-            CAR_READ, CAR_ADD, CAR_DELETE,
-            USER_READ, USER_UPDATE, USER_DELETE)
+                    CAR_READ, CAR_ADD, CAR_DELETE,
+                    USER_READ, USER_READ_ALL, USER_UPDATE, USER_DELETE)
             .collect(Collectors.toCollection(HashSet::new)));
 
     private final HashSet<AppUserPermission> permissions;
