@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 public class Comment {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String description;
     private LocalDateTime createdOn;
@@ -55,5 +55,45 @@ public class Comment {
 
     public void setUpdatedOn(LocalDateTime updatedOn) {
         this.updatedOn = updatedOn;
+    }
+
+    public static Builder builder(){
+        return new Builder();
+    }
+
+    public static class Builder{
+        private String description;
+        private LocalDateTime createdOn;
+        private LocalDateTime updatedOn;
+        private AppUser appUser;
+
+        public Builder description(String description){
+            this.description = description;
+            return this;
+        }
+
+        public Builder createdOn(LocalDateTime createdOn){
+            this.createdOn = createdOn;
+            return this;
+        }
+
+        public Builder updatedOn(LocalDateTime updatedOn){
+            this.updatedOn = updatedOn;
+            return this;
+        }
+
+        public Builder appUser(AppUser appUser){
+            this.appUser = appUser;
+            return this;
+        }
+
+        public Comment build(){
+            Comment comment = new Comment();
+            comment.setDescription(description);
+            comment.setCreatedOn(createdOn);
+            comment.setUpdatedOn(updatedOn);
+            comment.setAppUser(appUser);
+            return comment;
+        }
     }
 }
