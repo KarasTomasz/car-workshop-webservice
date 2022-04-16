@@ -2,6 +2,7 @@ package pl.tkaras.carworkshopwebservice.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -10,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import pl.tkaras.carworkshopwebservice.security.auth.AuthUserDetailsService;
 import pl.tkaras.carworkshopwebservice.security.jwt.JwtTokenVerifier;
 import pl.tkaras.carworkshopwebservice.security.jwt.JwtUsernameAndPasswordAuthenticationFilter;
@@ -40,7 +42,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager(), jwtConfig))
                 .addFilterAfter(new JwtTokenVerifier(jwtConfig), JwtUsernameAndPasswordAuthenticationFilter.class)
                 .authorizeRequests()
-                .antMatchers("/", "/user/registration", "/user/confirm" ,"/console/**")
+                .antMatchers("/", "/api/v1/user/registration", "/api/v1/user/confirm", "/login", "/console/**")
+                    .permitAll()
+                .antMatchers("/swagger-ui.html", "/v2/api-docs", "/webjars/**", "/swagger-resources/**")
                     .permitAll()
                 .anyRequest()
                 .authenticated()
