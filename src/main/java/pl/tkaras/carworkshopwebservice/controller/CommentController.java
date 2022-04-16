@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/comment")
+@RequestMapping("/api/v1/comment")
 public class CommentController {
 
     private final CommentService commentService;
@@ -48,19 +48,19 @@ public class CommentController {
 
     @PostMapping("")
     @PreAuthorize("hasAuthority('comment:write')")
-    public ResponseEntity<CommentDto> addComment(@RequestParam("username") String username, @RequestBody Comment comment){
+    public ResponseEntity<CommentDto> addComment(@RequestParam("username") String username, @RequestBody CommentDto comment){
         return new ResponseEntity<>(commentService.addComment(username, comment), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('comment:write')")
-    public ResponseEntity<CommentDto> updateCommentById(@PathVariable Long id, @RequestBody Comment comment){
+    public ResponseEntity<CommentDto> updateCommentById(@PathVariable Long id, @RequestBody CommentDto comment){
         return ResponseEntity.ok().body(commentService.updateCommentById(id, comment));
     }
 
     @PutMapping("")
     @PreAuthorize("hasAuthority('comment:write')")
-    public ResponseEntity<CommentDto> updateCommentByCreatedOn(@RequestBody Comment comment){
+    public ResponseEntity<CommentDto> updateCommentByCreatedOn(@RequestBody CommentDto comment){
         return ResponseEntity.ok().body(commentService.updateCommentByCreatedOn(comment));
     }
 
