@@ -9,7 +9,7 @@ public class RegistrationConfirmToken {
     public RegistrationConfirmToken(){}
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false)
     private String token;
@@ -51,7 +51,7 @@ public class RegistrationConfirmToken {
         return expiresOn;
     }
 
-    void setExpiredOn(LocalDateTime expiredOn) {
+    void setExpiredOn(LocalDateTime expiresOn) {
         this.expiresOn = expiresOn;
     }
 
