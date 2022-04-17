@@ -32,7 +32,7 @@ public class RegistrationService {
         if(token != null){
             try {
 
-                String link = "http://localhost:8081/user/confirm?token=" + token;
+                String link = "http://localhost:8081/api/v1/user/confirm?token=" + token;
                 emailSenderService.send(appUser.getEmail(), buildEmailTemplate(appUser.getFirstname(), link), true);
 
 
