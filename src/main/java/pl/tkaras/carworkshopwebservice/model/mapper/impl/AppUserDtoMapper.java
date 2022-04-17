@@ -11,12 +11,12 @@ import java.util.stream.Collectors;
 @Component
 public class AppUserDtoMapper implements DtoMapper<AppUser, AppUserDto> {
 
-    public AppUserDtoMapper(){ };
+    public AppUserDtoMapper(){ }
 
     @Override
     public List<AppUserDto> mapToDtos(List<AppUser> list) {
         return list.stream()
-                .map(user -> mapToDto(user))
+                .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
 
@@ -24,11 +24,6 @@ public class AppUserDtoMapper implements DtoMapper<AppUser, AppUserDto> {
     public AppUserDto mapToDto(AppUser appUser) {
         return AppUserDto.builder()
                 .username(appUser.getUsername())
-                .userRole(appUser.getRole())
-                .isAccountNonExpired(appUser.isAccountNonExpired())
-                .isAccountNonLocked(appUser.isAccountNonLocked())
-                .isCredentialsNonExpired(appUser.isCredentialsNonExpired())
-                .isEnabled(appUser.isEnabled())
                 .build();
     }
 }
