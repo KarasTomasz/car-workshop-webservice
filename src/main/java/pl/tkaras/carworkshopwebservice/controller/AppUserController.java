@@ -1,5 +1,6 @@
 package pl.tkaras.carworkshopwebservice.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +12,7 @@ import pl.tkaras.carworkshopwebservice.model.entity.AppUser;
 import java.util.List;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/v1/user")
 public class AppUserController {
 
     private final AppUserService appUserService;
@@ -23,20 +24,17 @@ public class AppUserController {
     }
 
     @GetMapping("/all")
-    @PreAuthorize("hasAuthority('user:read')")
+    @PreAuthorize("hasAuthority('user:readAll')")
     public List<AppUserDto> getAllUsers(){
         return appUserService.getAllUsers();
     }
 
     @GetMapping("")
     @PreAuthorize("hasAuthority('user:read')")
-    public AppUserDto getAppUser(@RequestBody String username){
-        return null;
-    }
-
-    @PostMapping("/registration")
-    public ResponseEntity addAppUser(@RequestBody AppUser appUser){
-        return registrationService.register(appUser);
+    public ResponseEntity<AppUserDto> getAppUser(@RequestParam("username") String username){
+        return appUserService.getUser(username)
+                .map(response -> ResponseEntity.ok().body(response))
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @GetMapping(path = "/confirm")
@@ -44,7 +42,12 @@ public class AppUserController {
         return registrationService.confirm(token);
     }
 
-    @PatchMapping("")
+    @PostMapping("/registration")
+    public ResponseEntity addAppUser(@RequestBody AppUser appUser){
+        return registrationService.register(appUser);
+    }
+
+    @PutMapping("")
     @PreAuthorize("hasAuthority('user:update')")
     public ResponseEntity updateAppUserRole(@RequestBody AppUser appUser){
         return appUserService.updateUser(appUser);
