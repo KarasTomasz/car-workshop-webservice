@@ -11,12 +11,12 @@ import java.util.stream.Collectors;
 @Component
 public class CarDtoMapper implements DtoMapper<Car, CarDto> {
 
-    public CarDtoMapper(){ };
+    public CarDtoMapper(){ }
 
     @Override
     public List<CarDto> mapToDtos(List<Car> list) {
         return list.stream()
-                .map(car -> mapToDto(car))
+                .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
 
@@ -26,6 +26,7 @@ public class CarDtoMapper implements DtoMapper<Car, CarDto> {
                 .description(car.getDescription())
                 .mark(car.getMark())
                 .model(car.getModel())
+                .username(car.getAppUser().getUsername())
                 .build();
     }
 }
