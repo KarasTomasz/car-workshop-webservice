@@ -2,10 +2,18 @@ package pl.tkaras.carworkshopwebservice.model.dto;
 
 public class CarDto {
 
+    private String username;
     private String mark;
     private String model;
     private String description;
 
+    public String getUsername() {
+        return username;
+    }
+
+    void setUsername(String username) {
+        this.username = username;
+    }
 
     public String getMark() {
         return mark;
@@ -37,9 +45,15 @@ public class CarDto {
 
     public static final class Builder{
 
+        private String username;
         private String mark;
         private String model;
         private String description;
+
+        public Builder username(String username){
+            this.username = username;
+            return this;
+        }
 
         public Builder mark(String mark){
             this.mark = mark;
@@ -61,9 +75,8 @@ public class CarDto {
             carDto.description = description;
             carDto.mark = mark;
             carDto.model = model;
+            carDto.username = username;
             return carDto;
         }
-
     }
-
 }
