@@ -1,6 +1,8 @@
 package pl.tkaras.carworkshopwebservice.logic;
 
 import org.springframework.stereotype.Service;
+import pl.tkaras.carworkshopwebservice.exception.AppUserNotFoundException;
+import pl.tkaras.carworkshopwebservice.exception.CarNotFoundException;
 import pl.tkaras.carworkshopwebservice.model.dto.CarDto;
 import pl.tkaras.carworkshopwebservice.model.entity.AppUser;
 import pl.tkaras.carworkshopwebservice.model.mapper.impl.CarDtoMapper;
@@ -24,7 +26,7 @@ public class CarService {
 
     public Optional<CarDto> getCar(Long id){
         Car car = carRepo.findById(id)
-                .orElseThrow(() -> new IllegalStateException(String.format("id %s not found", id)));
+                .orElseThrow(() -> new CarNotFoundException(id));
         return Optional.ofNullable( new CarDtoMapper().mapToDto(car));
     }
 
@@ -34,7 +36,7 @@ public class CarService {
 
     public List<CarDto> gelAllCarsByUsername(String username){
         AppUser appUser = carRepo.findByUsername(username)
-                .orElseThrow(() -> new IllegalStateException(String.format("user %s not found", username)));
+                .orElseThrow(() -> new AppUserNotFoundException(username));
 
         return carDtoMapper.mapToDtos(carRepo.findAllByAppUserId(appUser.getId()));
     }
@@ -46,7 +48,7 @@ public class CarService {
                     .model(cardto.getModel())
                     .description(cardto.getDescription())
                     .appUser(carRepo.findByUsername(cardto.getUsername())
-                            .orElseThrow(() -> new IllegalStateException(String.format("User %s not found", cardto.getUsername()))))
+                            .orElseThrow(() -> new AppUserNotFoundException(cardto.getUsername())))
                     .build();
 
         return carDtoMapper.mapToDto(carRepo.save(car));
@@ -55,7 +57,7 @@ public class CarService {
     public CarDto updateCar(Long id, CarDto cardto){
         if(carRepo.existsById(id)){
             Car car = carRepo.findById(id)
-                    .orElseThrow(() -> new IllegalStateException(String.format("id %s not found", id)));
+                    .orElseThrow(() -> new CarNotFoundException(id));
 
             car.setModel(cardto.getMark());
             car.setModel(cardto.getModel());
@@ -68,7 +70,7 @@ public class CarService {
             return carDtoMapper.mapToDto(car);
         }
         else {
-            throw new IllegalStateException(String.format("id %s not found", id));
+            throw new CarNotFoundException(id);
         }
     }
 
@@ -77,7 +79,7 @@ public class CarService {
             carRepo.deleteById(id);
         }
         else{
-            throw new IllegalStateException(String.format("id %s not found", id));
+            throw new CarNotFoundException(id);
         }
     }
 
