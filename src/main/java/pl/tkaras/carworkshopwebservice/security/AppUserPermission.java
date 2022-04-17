@@ -6,6 +6,7 @@ public enum AppUserPermission {
     COMMENT_DELETE("comment:delete"),
     CAR_READ("car:read"),
     CAR_ADD("car:add"),
+    CAR_UPDATE("car:update"),
     CAR_DELETE("car:delete"),
     USER_READ("user:read"),
     USER_READ_ALL("user:readAll"),
