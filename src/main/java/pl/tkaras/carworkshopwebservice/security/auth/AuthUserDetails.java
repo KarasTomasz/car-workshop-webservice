@@ -3,18 +3,19 @@ package pl.tkaras.carworkshopwebservice.security.auth;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import pl.tkaras.carworkshopwebservice.model.entity.AppUser;
+import pl.tkaras.carworkshopwebservice.model.entity.AppUserDetails;
 import pl.tkaras.carworkshopwebservice.security.AppUserRole;
 
 import java.util.Collection;
-import java.util.Set;
 
 public class AuthUserDetails implements UserDetails {
 
-    private AppUser appUser;
-    private Set<? extends GrantedAuthority> grantedAuthorities;
+    private final AppUser appUser;
+    private final AppUserDetails userDetails;
 
-    public AuthUserDetails(AppUser appUser){
+    public AuthUserDetails(AppUser appUser, AppUserDetails userDetails){
         this.appUser = appUser;
+        this.userDetails = userDetails;
     }
 
     @Override
@@ -29,27 +30,28 @@ public class AuthUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        String role = appUser.getRole();
+
+        String role = userDetails.getRole();
         return AppUserRole.valueOf(role).getGrantedAuthority();
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return appUser.isAccountNonExpired();
+        return userDetails.isAccountNonExpired();
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return appUser.isAccountNonLocked();
+        return userDetails.isAccountNonLocked();
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return appUser.isCredentialsNonExpired();
+        return userDetails.isCredentialsNonExpired();
     }
 
     @Override
     public boolean isEnabled() {
-        return appUser.isEnabled();
+        return userDetails.isEnabled();
     }
 }
