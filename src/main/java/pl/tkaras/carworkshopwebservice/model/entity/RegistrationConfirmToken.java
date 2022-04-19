@@ -23,7 +23,7 @@ public class RegistrationConfirmToken {
     @JoinColumn(nullable = false, name = "appUserId")
     private AppUser appUser;
 
-    Long getId() {
+    public Long getId() {
         return id;
     }
 
