@@ -21,7 +21,7 @@ public class AppUserDetails {
     public AppUserDetails() {
     }
 
-    Long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -69,7 +69,7 @@ public class AppUserDetails {
         isEnabled = enabled;
     }
 
-    AppUser getAppUser() {
+    public AppUser getAppUser() {
         return appUser;
     }
 
