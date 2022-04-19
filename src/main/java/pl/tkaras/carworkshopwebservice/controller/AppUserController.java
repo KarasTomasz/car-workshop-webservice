@@ -6,7 +6,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pl.tkaras.carworkshopwebservice.logic.AppUserService;
 import pl.tkaras.carworkshopwebservice.logic.RegistrationService;
+import pl.tkaras.carworkshopwebservice.model.dto.AppUserDetailsDto;
 import pl.tkaras.carworkshopwebservice.model.dto.AppUserDto;
+import pl.tkaras.carworkshopwebservice.model.dto.RegistrationConfirmTokenDto;
 import pl.tkaras.carworkshopwebservice.model.entity.AppUser;
 
 import java.util.List;
@@ -37,27 +39,41 @@ public class AppUserController {
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    @GetMapping("/details/all")
+    @PreAuthorize("hasAuthority('user:readAll')")
+    public List<AppUserDetailsDto> getAllUsersDetails(){
+        return appUserService.getAllUsersDetails();
+    }
+
+   @GetMapping("/details/")
+    @PreAuthorize("hasAuthority('user:read')")
+    public ResponseEntity<AppUserDetailsDto> getAppUserDetail(@RequestParam("username") String username){
+        return appUserService.getUserDetail(username)
+                .map(response -> ResponseEntity.ok().body(response))
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
     @GetMapping(path = "/confirm")
-    public ResponseEntity confirm(@RequestParam("token") String token) {
-        return registrationService.confirm(token);
+    public ResponseEntity<Object> confirm(@RequestParam("token") String token) {
+        registrationService.confirm(token);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/registration")
-    public ResponseEntity addAppUser(@RequestBody AppUser appUser){
-        return registrationService.register(appUser);
+    public ResponseEntity<RegistrationConfirmTokenDto> addAppUser(@RequestBody AppUserDto appUserdto){
+        return new ResponseEntity<>(registrationService.register(appUserdto), HttpStatus.CREATED);
     }
 
     @PutMapping("")
     @PreAuthorize("hasAuthority('user:update')")
-    public ResponseEntity updateAppUserRole(@RequestBody AppUser appUser){
-        return appUserService.updateUser(appUser);
+    public ResponseEntity<AppUserDto> updateAppUserRole(@RequestBody AppUser appUser){
+        return ResponseEntity.ok().body(appUserService.updateUser(appUser));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("")
     @PreAuthorize("hasAuthority('user:delete')")
-    public ResponseEntity deleteAppUser(@PathVariable() Long id){
-        return appUserService.deleteUser(id);
+    public ResponseEntity<Object> deleteAppUser(@RequestParam("id") Long id){
+        appUserService.deleteUser(id);
+        return ResponseEntity.noContent().build();
     }
-
-
 }
