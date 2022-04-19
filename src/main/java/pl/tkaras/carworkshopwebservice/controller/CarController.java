@@ -19,9 +19,9 @@ public class CarController {
         this.carService = carService;
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("")
     @PreAuthorize("hasAuthority('car:read')")
-    public ResponseEntity<CarDto> getCar(@PathVariable Long id){
+    public ResponseEntity<CarDto> getCar(@RequestParam("id") Long id){
          return carService.getCar(id)
                  .map(response -> ResponseEntity.ok().body(response))
                  .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
@@ -33,34 +33,29 @@ public class CarController {
         return new ResponseEntity<>(carService.gelAllCars(), HttpStatus.OK);
     }
 
-    @GetMapping("/all/{username}")
+    @GetMapping("/username/all")
     @PreAuthorize("hasAuthority('car:read')")
-    public ResponseEntity<List<CarDto>> getCarsByUsername(@PathVariable String username){
+    public ResponseEntity<List<CarDto>> getCarsByUsername(@RequestParam("username") String username){
         return new ResponseEntity<>(carService.gelAllCarsByUsername(username), HttpStatus.OK);
     }
 
     @PostMapping("")
     @PreAuthorize("hasAuthority('car:add')")
     public ResponseEntity<CarDto> addCar(@RequestBody CarDto cardto){
-        return new ResponseEntity<>(carService.addCar(cardto), HttpStatus.OK);
+        return new ResponseEntity<>(carService.addCar(cardto), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("")
     @PreAuthorize("hasAuthority('car:update')")
-    public ResponseEntity<CarDto> updateCar(@PathVariable Long id ,@RequestBody CarDto cardto){
+    public ResponseEntity<CarDto> updateCar(@RequestParam("id") Long id ,@RequestBody CarDto cardto){
         return ResponseEntity.ok().body(carService.updateCar(id, cardto));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("")
     @PreAuthorize("hasAuthority('car:delete')")
-    public ResponseEntity deleteCar(@PathVariable Long id){
-        if(carService.getCar(id).isPresent()){
-            carService.deleteCar(id);
-            return ResponseEntity.ok().build();
-        }
-        else {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Object> deleteCar(@RequestParam("id") Long id){
+        carService.deleteCar(id);
+        return ResponseEntity.noContent().build();
     }
 
 }
