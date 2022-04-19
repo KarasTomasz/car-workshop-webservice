@@ -1,67 +1,64 @@
 package pl.tkaras.carworkshopwebservice.logic;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import pl.tkaras.carworkshopwebservice.exception.EmailSendingException;
+import pl.tkaras.carworkshopwebservice.exception.TokenNotFoundException;
+import pl.tkaras.carworkshopwebservice.model.dto.AppUserDto;
+import pl.tkaras.carworkshopwebservice.model.dto.RegistrationConfirmTokenDto;
 import pl.tkaras.carworkshopwebservice.model.entity.AppUser;
 import pl.tkaras.carworkshopwebservice.model.entity.RegistrationConfirmToken;
-import pl.tkaras.carworkshopwebservice.repository.AppUserRepository;
+import pl.tkaras.carworkshopwebservice.model.mapper.impl.RegistrationConfirmTokenDtoMapper;
 import pl.tkaras.carworkshopwebservice.repository.RegistrationConfirmTokenRepository;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 public class RegistrationService {
 
     private final RegistrationConfirmTokenRepository confirmTokenRepo;
      private final AppUserService appUserService;
+     private final RegistrationConfirmTokenDtoMapper confirmTokenDtoMapper;
     private final EmailSenderService emailSenderService;
 
 
-    public RegistrationService(RegistrationConfirmTokenRepository confirmTokenRepo, AppUserService appUserService, EmailSenderService emailSenderService) {
+    public RegistrationService(RegistrationConfirmTokenRepository confirmTokenRepo, AppUserService appUserService, RegistrationConfirmTokenDtoMapper confirmTokenDtoMapper, EmailSenderService emailSenderService) {
         this.confirmTokenRepo = confirmTokenRepo;
         this.appUserService = appUserService;
+        this.confirmTokenDtoMapper = confirmTokenDtoMapper;
         this.emailSenderService = emailSenderService;
     }
 
-    public ResponseEntity register(AppUser appUser) {
+    //@Transactional
+    public RegistrationConfirmTokenDto register(AppUserDto appUserdto) {
 
-        String token = appUserService.signUp(appUser);
+        String token = appUserService.signUp(appUserdto);
 
         if(token != null){
             try {
-
                 String link = "http://localhost:8081/api/v1/user/confirm?token=" + token;
-                emailSenderService.send(appUser.getEmail(), buildEmailTemplate(appUser.getFirstname(), link), true);
-
-
+                emailSenderService.send(appUserdto.getEmail(), buildEmailTemplate(appUserdto.getFirstname(), link), true);
             }
             catch (Exception e){
-                throw new IllegalStateException("sending email failed");
+                throw new EmailSendingException(appUserdto.getEmail());
             }
+            return confirmTokenDtoMapper.mapToDto(confirmTokenRepo.findByToken(token)
+                    .orElseThrow(() -> new TokenNotFoundException(token)));
         }
-
         return null;
     }
 
     @Transactional
-    public ResponseEntity confirm(String token){
-        if(confirmTokenRepo.existsByToken(token)){
-            RegistrationConfirmToken registrationConfirmToken =
-                    confirmTokenRepo.findByToken(token)
-                                    .orElseThrow(() -> new IllegalStateException(String.format("Problem with token %s", token)));
+    public void confirm(String token){
+        RegistrationConfirmToken registrationConfirmToken = confirmTokenRepo.findByToken(token)
+                .orElseThrow(() -> new TokenNotFoundException(token));
 
-            registrationConfirmToken.setConfirmedOn(LocalDateTime.now());
+        registrationConfirmToken.setConfirmedOn(LocalDateTime.now());
 
-            appUserService.enableAppUser(registrationConfirmToken.getAppUser().getUsername());
+        appUserService.enableAppUser(registrationConfirmToken.getAppUser().getUsername());
 
-            AppUser user =  registrationConfirmToken.getAppUser();
-            registrationConfirmToken.setAppUser(user);
-
-            return ResponseEntity.ok().build();
-        }
-        return ResponseEntity.notFound().build();
+        AppUser user = registrationConfirmToken.getAppUser();
+        registrationConfirmToken.setAppUser(user);
     }
 
     private String buildEmailTemplate(String name, String link) {
