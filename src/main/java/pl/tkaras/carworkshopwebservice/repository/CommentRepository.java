@@ -11,7 +11,6 @@ import java.util.Optional;
 public interface CommentRepository {
 
     boolean existsById(Long id);
-    boolean existsByCreatedOn(LocalDateTime createdOn);
 
     @Query("SELECT CASE WHEN (COUNT(au) > 0) THEN true ELSE false end " +
             "FROM AppUser au where au.username = ?1" )
@@ -22,12 +21,10 @@ public interface CommentRepository {
     Long findUserIdByUsername(String username);
 
     @Query("SELECT au FROM AppUser au WHERE au.username = ?1")
-    AppUser findUserByUsername(String username);
-    Comment findByCreatedOn(LocalDateTime createdOn);
+    Optional<AppUser> findUserByUsername(String username);
+
+    List<Comment> findAll();
     List<Comment> findAllByAppUserId(Long id);
     Comment save(Comment comment);
     void deleteById(Long id);
-    void deleteByCreatedOn(LocalDateTime createdOn);
-
-
 }
