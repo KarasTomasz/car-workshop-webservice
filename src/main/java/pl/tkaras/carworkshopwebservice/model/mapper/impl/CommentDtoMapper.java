@@ -16,13 +16,14 @@ public class CommentDtoMapper implements DtoMapper<Comment, CommentDto> {
     @Override
     public List<CommentDto> mapToDtos(List<Comment> list) {
         return list.stream()
-                .map(comment -> mapToDto(comment))
+                .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public CommentDto mapToDto(Comment comment) {
         return CommentDto.builder()
+                .id(comment.getId())
                 .description(comment.getDescription())
                 .username(comment.getAppUser().getUsername())
                 .createdOn(comment.getCreatedOn())
