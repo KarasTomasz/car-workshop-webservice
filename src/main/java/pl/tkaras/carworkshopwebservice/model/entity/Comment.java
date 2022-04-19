@@ -19,9 +19,9 @@ public class Comment {
     public Comment() {
     }
 
-    long getId() { return id; }
+    public Long getId() { return id; }
 
-    void setId(long id) {
+    void setId(Long id) {
         this.id = id;
     }
 
