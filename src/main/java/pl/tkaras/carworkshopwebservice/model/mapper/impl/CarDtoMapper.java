@@ -23,6 +23,7 @@ public class CarDtoMapper implements DtoMapper<Car, CarDto> {
     @Override
     public CarDto mapToDto(Car car) {
         return CarDto.builder()
+                .id(car.getId())
                 .description(car.getDescription())
                 .mark(car.getMark())
                 .model(car.getModel())
