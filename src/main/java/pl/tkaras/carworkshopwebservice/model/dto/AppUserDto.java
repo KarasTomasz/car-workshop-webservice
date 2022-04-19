@@ -1,13 +1,30 @@
 package pl.tkaras.carworkshopwebservice.model.dto;
 
+import io.swagger.annotations.ApiModelProperty;
+
 public class AppUserDto {
 
+    @ApiModelProperty(readOnly = true)
+    private Long id;
+    @ApiModelProperty(required = true)
     private String username;
-    private String role;
-    private boolean isAccountNonExpired;
-    private boolean isAccountNonLocked;
-    private boolean isCredentialsNonExpired;
-    private boolean isEnabled;
+    @ApiModelProperty(required = true)
+    private String password;
+    @ApiModelProperty(required = true)
+    private String email;
+    private String firstname;
+    private String lastname;
+    private String street;
+    private String zipCode;
+    private String city;
+
+    public Long getId() {
+        return id;
+    }
+
+    void setId(Long id) {
+        this.id = id;
+    }
 
     public String getUsername() {
         return username;
@@ -17,44 +34,60 @@ public class AppUserDto {
         this.username = username;
     }
 
-    public String getRole() {
-        return role;
+    public String getPassword() {
+        return password;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    void setPassword(String password) {
+        this.password = password;
     }
 
-    public boolean isAccountNonExpired() {
-        return isAccountNonExpired;
+    public String getEmail() {
+        return email;
     }
 
-    public void setAccountNonExpired(boolean accountNonExpired) {
-        isAccountNonExpired = accountNonExpired;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public boolean isAccountNonLocked() {
-        return isAccountNonLocked;
+    public String getFirstname() {
+        return firstname;
     }
 
-    public void setAccountNonLocked(boolean accountNonLocked) {
-        isAccountNonLocked = accountNonLocked;
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
     }
 
-    public boolean isCredentialsNonExpired() {
-        return isCredentialsNonExpired;
+    public String getLastname() {
+        return lastname;
     }
 
-    public void setCredentialsNonExpired(boolean credentialsNonExpired) {
-        isCredentialsNonExpired = credentialsNonExpired;
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
     }
 
-    public boolean isEnabled() {
-        return isEnabled;
+    public String getStreet() {
+        return street;
     }
 
-    public void setEnabled(boolean enabled) {
-        isEnabled = enabled;
+    public void setStreet(String street) {
+        this.street = street;
+    }
+
+    public String getZipCode() {
+        return zipCode;
+    }
+
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
     }
 
     public static Builder builder(){
@@ -62,51 +95,65 @@ public class AppUserDto {
     }
 
     public static final class Builder{
+        private Long id;
         private String username;
-        private String role;
-        private boolean isAccountNonExpired;
-        private boolean isAccountNonLocked;
-        private boolean isCredentialsNonExpired;
-        private boolean isEnabled;
+        private String email;
+        private String firstname;
+        private String lastname;
+        private String street;
+        private String zipCode;
+        private String city;
 
+        public Builder id(Long id){
+            this.id = id;
+            return this;
+        }
         public Builder username(String username){
             this.username = username;
             return this;
         }
 
-        public Builder userRole(String role){
-            this.role = role;
+        public Builder email(String email){
+            this.email = email;
             return this;
         }
 
-        public Builder isAccountNonExpired(boolean isAccountNonExpired){
-            this.isAccountNonExpired = isAccountNonExpired;
+        public Builder firstname(String firstname){
+            this.firstname = firstname;
             return this;
         }
 
-        public Builder isAccountNonLocked(boolean isAccountNonLocked){
-            this.isAccountNonLocked = isAccountNonLocked;
+        public Builder lastname(String lastname){
+            this.lastname = lastname;
             return this;
         }
 
-        public Builder isCredentialsNonExpired(boolean isCredentialsNonExpired){
-            this.isCredentialsNonExpired = isCredentialsNonExpired;
+        public Builder street(String street){
+            this.street = street;
             return this;
         }
 
-        public Builder isEnabled(boolean isEnabled){
-            this.isEnabled = isAccountNonExpired;
+        public Builder zipCode(String zipCode){
+            this.zipCode = zipCode;
             return this;
         }
+
+        public Builder city(String city){
+            this.city = city;
+            return this;
+        }
+
 
         public AppUserDto build(){
             AppUserDto appUserDto = new AppUserDto();
+            appUserDto.id = id;
             appUserDto.username = username;
-            appUserDto.role = role;
-            appUserDto.isAccountNonExpired = isAccountNonExpired;
-            appUserDto.isAccountNonLocked = isAccountNonLocked;
-            appUserDto.isCredentialsNonExpired = isCredentialsNonExpired;
-            appUserDto.isEnabled = isEnabled;
+            appUserDto.email = email;
+            appUserDto.firstname = firstname;
+            appUserDto.lastname = lastname;
+            appUserDto.street = street;
+            appUserDto.zipCode = zipCode;
+            appUserDto.city = city;
             return appUserDto;
         }
 
