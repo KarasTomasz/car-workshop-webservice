@@ -1,11 +1,31 @@
 package pl.tkaras.carworkshopwebservice.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnoreType;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiModelProperty.AccessMode;
+
 public class CarDto {
 
+    @ApiModelProperty(readOnly = true)
+    private Long id;
+    @ApiModelProperty(required = true)
     private String username;
+    @ApiModelProperty(required = true)
     private String mark;
+    @ApiModelProperty(required = true)
     private String model;
     private String description;
+
+    public Long getId() {
+        return id;
+    }
+
+    void setId(Long id) {
+        this.id = id;
+    }
 
     public String getUsername() {
         return username;
@@ -45,10 +65,16 @@ public class CarDto {
 
     public static final class Builder{
 
+        private Long id;
         private String username;
         private String mark;
         private String model;
         private String description;
+
+        public Builder id(Long id){
+            this.id = id;
+            return this;
+        }
 
         public Builder username(String username){
             this.username = username;
@@ -72,6 +98,7 @@ public class CarDto {
 
         public CarDto build(){
             CarDto carDto = new CarDto();
+            carDto.id = id;
             carDto.description = description;
             carDto.mark = mark;
             carDto.model = model;
