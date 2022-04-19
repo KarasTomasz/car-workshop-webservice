@@ -1,5 +1,10 @@
 package pl.tkaras.carworkshopwebservice.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import io.swagger.annotations.ApiModelProperty;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
@@ -23,11 +28,11 @@ public class Car {
     public Car() {
     }
 
-    long getId() {
+    public Long getId() {
         return id;
     }
 
-    void setId(long id) {
+    void setId(Long id) {
         this.id = id;
     }
 
