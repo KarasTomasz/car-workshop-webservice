@@ -10,13 +10,6 @@ import java.util.Optional;
 
 public interface RegistrationConfirmTokenRepository {
 
-    boolean existsByToken(String token);
     Optional<RegistrationConfirmToken> findByToken(String token);
     RegistrationConfirmToken save(RegistrationConfirmToken confirmToken);
-
-    @Transactional
-    @Modifying
-    @Query("UPDATE RegistrationConfirmToken r SET r.confirmedOn = ?2 WHERE r.token = ?1")
-    boolean updateConfirmationOn(String token, LocalDateTime confirmedOn);
-
 }
