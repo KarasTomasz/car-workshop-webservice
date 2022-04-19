@@ -23,7 +23,14 @@ public class AppUserDtoMapper implements DtoMapper<AppUser, AppUserDto> {
     @Override
     public AppUserDto mapToDto(AppUser appUser) {
         return AppUserDto.builder()
+                .id(appUser.getId())
                 .username(appUser.getUsername())
+                .email(appUser.getEmail())
+                .firstname(appUser.getFirstname())
+                .lastname(appUser.getLastname())
+                .street(appUser.getStreet())
+                .zipCode(appUser.getZipCode())
+                .city(appUser.getCity())
                 .build();
     }
 }
