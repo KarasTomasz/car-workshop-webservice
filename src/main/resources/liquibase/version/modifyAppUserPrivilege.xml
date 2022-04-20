@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+		http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+		http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.9.0.xsd">
+
+
+    <changeSet author="T.Karas" id="1">
+        <update schemaName="public"
+                tableName="app_user_details">
+            <column  name="is_account_non_expired"  value="true"/>
+            <column  name="is_account_non_locked"  value="true"/>
+            <column  name="is_credentials_non_expired"  value="true"/>
+            <column  name="is_enabled"  value="true"/>
+            <column  name="role"  value="ADMIN"/>
+            <where>id='1'</where>
+        </update>
+    </changeSet>
+
+</databaseChangeLog>
