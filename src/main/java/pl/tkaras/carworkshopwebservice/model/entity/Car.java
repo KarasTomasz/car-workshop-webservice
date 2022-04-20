@@ -89,6 +89,8 @@ public class Car {
     }
 
     public static class Builder{
+
+        private Long id;
         private String mark;
         private String model;
         private String description;
@@ -96,6 +98,10 @@ public class Car {
         private LocalDateTime updatedOn;
         private AppUser appUser;
 
+        public Builder id(Long id){
+            this.id = id;
+            return this;
+        }
 
         public Builder mark(String mark){
             this.mark = mark;
@@ -129,6 +135,7 @@ public class Car {
 
         public Car build(){
             Car car = new Car();
+            car.id = id;
             car.mark = mark;
             car.model = model;
             car.description = description;
