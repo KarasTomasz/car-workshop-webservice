@@ -55,24 +55,18 @@ public class CarService {
     }
 
     public CarDto updateCar(Long id, CarDto cardto){
-        if(carRepo.existsById(id)){
-            Car car = carRepo.findById(id)
-                    .orElseThrow(() -> new CarNotFoundException(id));
+        Car car = carRepo.findById(id)
+                .orElseThrow(() -> new CarNotFoundException(id));
 
-            car.setModel(cardto.getMark());
-            car.setModel(cardto.getModel());
-            car.setDescription(cardto.getDescription());
-            car.setCreatedOn(car.getCreatedOn());
-            car.setUpdatedOn(LocalDateTime.now());
-            car.setAppUser(car.getAppUser());
+        car.setModel(cardto.getMark());
+        car.setModel(cardto.getModel());
+        car.setDescription(cardto.getDescription());
+        car.setCreatedOn(car.getCreatedOn());
+        car.setUpdatedOn(LocalDateTime.now());
+        car.setAppUser(car.getAppUser());
 
-            carRepo.save(car);
-            return carDtoMapper.mapToDto(car);
-        }
-        else {
-            throw new CarNotFoundException(id);
-        }
-    }
+        return carDtoMapper.mapToDto(carRepo.save(car));
+      }
 
     public void deleteCar(Long id){
         if(carRepo.existsById(id)){
