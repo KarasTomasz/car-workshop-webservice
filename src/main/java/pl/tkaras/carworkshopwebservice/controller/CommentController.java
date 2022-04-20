@@ -15,6 +15,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/comment")
+@CrossOrigin(origins = "https://app-car-workshop.herokuapp.com", maxAge = 3600)
 public class CommentController {
 
     private final CommentService commentService;

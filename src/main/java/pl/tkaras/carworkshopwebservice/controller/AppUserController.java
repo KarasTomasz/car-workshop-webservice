@@ -15,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/user")
+@CrossOrigin(origins = "https://app-car-workshop.herokuapp.com", maxAge = 3600)
 public class AppUserController {
 
     private final AppUserService appUserService;
