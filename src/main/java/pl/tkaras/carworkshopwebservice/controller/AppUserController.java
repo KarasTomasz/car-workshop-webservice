@@ -53,7 +53,7 @@ public class AppUserController {
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @GetMapping(path = "/confirm")
+    @PostMapping(path = "/confirm")
     public ResponseEntity<Object> confirm(@RequestParam("token") String token) {
         registrationService.confirm(token);
         return ResponseEntity.ok().build();
