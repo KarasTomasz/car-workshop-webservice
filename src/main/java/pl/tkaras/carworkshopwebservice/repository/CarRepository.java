@@ -11,7 +11,7 @@ public interface CarRepository {
 
     Optional<Car> findById(Long id);
     List<Car> findAll();
-    List<Car> findAllByAppUserId(long id);
+    List<Car> findAllByAppUserId(Long id);
 
     @Query("SELECT au FROM AppUser au WHERE au.username = ?1")
     Optional<AppUser> findByUsername(String username);
