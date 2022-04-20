@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/car")
-@CrossOrigin(origins = "https://app-car-workshop.herokuapp.com", maxAge = 3600)
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class CarController {
 
     private final CarService carService;

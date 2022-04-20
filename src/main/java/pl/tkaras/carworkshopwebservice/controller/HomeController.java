@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@CrossOrigin(origins = "https://app-car-workshop.herokuapp.com", maxAge = 3600)
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class HomeController {
 
     @GetMapping("/")
