@@ -33,7 +33,7 @@ To use the API Swagger you need obtain authorization by sending JWT token.
 
 ![App_image](src/main/resources/images/authToken.PNG)
 
-Available Api which can be used:
+Available Api that can be used:
 
 ![App_image](src/main/resources/images/appUserApi.PNG)
 
