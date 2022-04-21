@@ -47,11 +47,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/swagger-ui.html", "/v2/api-docs", "/webjars/**", "/swagger-resources/**")
                     .permitAll()
                 .anyRequest()
-                .authenticated()
-                .and()
-                .headers().frameOptions().disable() //it fix h2 console problem
-                .and()
-                .csrf().disable();
+                .authenticated();
+                //.and()
+                //.headers().frameOptions().disable() //it fix h2 console problem
+                //.and()
+                //.csrf().disable();
     }
 
     @Override
