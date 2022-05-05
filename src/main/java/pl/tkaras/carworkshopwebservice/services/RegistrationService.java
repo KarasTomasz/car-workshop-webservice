@@ -3,11 +3,8 @@ package pl.tkaras.carworkshopwebservice.services;
 import org.springframework.stereotype.Service;
 import pl.tkaras.carworkshopwebservice.exceptions.EmailSendingException;
 import pl.tkaras.carworkshopwebservice.exceptions.TokenNotFoundException;
-import pl.tkaras.carworkshopwebservice.models.dtos.AppUserDto;
-import pl.tkaras.carworkshopwebservice.models.dtos.RegistrationConfirmTokenDto;
 import pl.tkaras.carworkshopwebservice.models.entities.AppUser;
 import pl.tkaras.carworkshopwebservice.models.entities.RegistrationConfirmToken;
-import pl.tkaras.carworkshopwebservice.models.mappers.impl.RegistrationConfirmTokenDtoMapper;
 import pl.tkaras.carworkshopwebservice.repositories.RegistrationConfirmTokenRepository;
 
 import javax.transaction.Transactional;
@@ -17,33 +14,33 @@ import java.time.LocalDateTime;
 public class RegistrationService {
 
     private final RegistrationConfirmTokenRepository confirmTokenRepo;
+
      private final AppUserService appUserService;
-     private final RegistrationConfirmTokenDtoMapper confirmTokenDtoMapper;
+
     private final EmailSenderService emailSenderService;
 
 
-    public RegistrationService(RegistrationConfirmTokenRepository confirmTokenRepo, AppUserService appUserService, RegistrationConfirmTokenDtoMapper confirmTokenDtoMapper, EmailSenderService emailSenderService) {
+    public RegistrationService(RegistrationConfirmTokenRepository confirmTokenRepo, AppUserService appUserService, EmailSenderService emailSenderService) {
         this.confirmTokenRepo = confirmTokenRepo;
         this.appUserService = appUserService;
-        this.confirmTokenDtoMapper = confirmTokenDtoMapper;
         this.emailSenderService = emailSenderService;
     }
 
     //@Transactional
-    public RegistrationConfirmTokenDto register(AppUserDto appUserdto) {
+    public RegistrationConfirmToken register(AppUser appUser) {
 
-        String token = appUserService.signUp(appUserdto);
+        String token = appUserService.signUp(appUser);
 
         if(token != null){
             try {
                 String link = "http://localhost:8081/api/v1/user/confirm?token=" + token;
-                emailSenderService.send(appUserdto.getEmail(), buildEmailTemplate(appUserdto.getFirstname(), link), true);
+                emailSenderService.send(appUser.getEmail(), buildEmailTemplate(appUser.getFirstname(), link), true);
             }
             catch (Exception e){
-                throw new EmailSendingException(appUserdto.getEmail());
+                throw new EmailSendingException(appUser.getEmail());
             }
-            return confirmTokenDtoMapper.mapToDto(confirmTokenRepo.findByToken(token)
-                    .orElseThrow(() -> new TokenNotFoundException(token)));
+            return confirmTokenRepo.findByToken(token)
+                    .orElseThrow(() -> new TokenNotFoundException(token));
         }
         return null;
     }
