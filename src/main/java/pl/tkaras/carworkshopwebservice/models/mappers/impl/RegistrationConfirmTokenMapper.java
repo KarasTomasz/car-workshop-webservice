@@ -9,13 +9,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class RegistrationConfirmTokenDtoMapper implements DtoMapper<RegistrationConfirmToken, RegistrationConfirmTokenDto> {
+public class RegistrationConfirmTokenMapper implements DtoMapper<RegistrationConfirmToken, RegistrationConfirmTokenDto> {
 
 
     @Override
     public List<RegistrationConfirmTokenDto> mapToDtos(List<RegistrationConfirmToken> list) {
         return list.stream()
-                .map(token -> mapToDto(token))
+                .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
 
@@ -26,6 +26,21 @@ public class RegistrationConfirmTokenDtoMapper implements DtoMapper<Registration
                 .createdOn(confirmToken.getCreatedOn())
                 .expiresOn(confirmToken.getExpiredOn())
                 .confirmedOn(confirmToken.getConfirmedOn())
+                .build();
+    }
+
+    @Override
+    public List<RegistrationConfirmToken> mapToEntities(List<RegistrationConfirmTokenDto> list) {
+        return list.stream()
+                .map(this::mapToEntity)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public RegistrationConfirmToken mapToEntity(RegistrationConfirmTokenDto registrationConfirmTokenDto) {
+        return RegistrationConfirmToken.builder()
+                .token(registrationConfirmTokenDto.getToken())
+                .expiresOn(registrationConfirmTokenDto.getExpiresOn())
                 .build();
     }
 }
