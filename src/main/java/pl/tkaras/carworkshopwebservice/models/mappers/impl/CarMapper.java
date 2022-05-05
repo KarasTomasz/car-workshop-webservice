@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class CarDtoMapper implements DtoMapper<Car, CarDto> {
+public class CarMapper implements DtoMapper<Car, CarDto> {
 
-    public CarDtoMapper(){ }
+    public CarMapper(){ }
 
     @Override
     public List<CarDto> mapToDtos(List<Car> list) {
@@ -28,6 +28,22 @@ public class CarDtoMapper implements DtoMapper<Car, CarDto> {
                 .mark(car.getMark())
                 .model(car.getModel())
                 .username(car.getAppUser().getUsername())
+                .build();
+    }
+
+    @Override
+    public List<Car> mapToEntities(List<CarDto> list) {
+        return list.stream()
+                .map(this::mapToEntity)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Car mapToEntity(CarDto carDto) {
+        return Car.builder()
+                .description(carDto.getDescription())
+                .mark(carDto.getMark())
+                .model(carDto.getModel())
                 .build();
     }
 }

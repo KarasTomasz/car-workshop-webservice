@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class CommentDtoMapper implements DtoMapper<Comment, CommentDto> {
+public class CommentMapper implements DtoMapper<Comment, CommentDto> {
 
-    public CommentDtoMapper(){ }
+    public CommentMapper(){ }
 
     @Override
     public List<CommentDto> mapToDtos(List<Comment> list) {
@@ -27,6 +27,20 @@ public class CommentDtoMapper implements DtoMapper<Comment, CommentDto> {
                 .description(comment.getDescription())
                 .username(comment.getAppUser().getUsername())
                 .createdOn(comment.getCreatedOn())
+                .build();
+    }
+
+    @Override
+    public List<Comment> mapToEntities(List<CommentDto> list) {
+        return list.stream()
+                .map(this::mapToEntity)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Comment mapToEntity(CommentDto commentDto) {
+        return Comment.builder()
+                .description(commentDto.getDescription())
                 .build();
     }
 }

@@ -2,9 +2,14 @@ package pl.tkaras.carworkshopwebservice.models.mappers;
 
 import java.util.List;
 
-public interface DtoMapper<T, K> {
+public interface DtoMapper<T, DTO> {
 
-    List<K> mapToDtos(List<T> list);
-    K mapToDto(T t);
+    List<DTO> mapToDtos(List<T> list);
+
+    DTO mapToDto(T t);
+
+    List<T> mapToEntities(List<DTO> list);
+
+    T mapToEntity(DTO dto);
 
 }

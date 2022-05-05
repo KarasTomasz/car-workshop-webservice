@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class AppUserDetailsDtoMapper implements DtoMapper<AppUserDetails, AppUserDetailsDto> {
+public class AppUserDetailsMapper implements DtoMapper<AppUserDetails, AppUserDetailsDto> {
 
-    public AppUserDetailsDtoMapper(){ }
+    public AppUserDetailsMapper(){ }
 
     @Override
     public List<AppUserDetailsDto> mapToDtos(List<AppUserDetails> list) {
@@ -30,5 +30,24 @@ public class AppUserDetailsDtoMapper implements DtoMapper<AppUserDetails, AppUse
                 .isEnabled(appUserDetails.isEnabled())
                 .userRole(appUserDetails.getRole())
                 .build();
+    }
+
+    @Override
+    public List<AppUserDetails> mapToEntities(List<AppUserDetailsDto> list) {
+        return list.stream()
+                .map(this::mapToEntity)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public AppUserDetails mapToEntity(AppUserDetailsDto appUserDetailsDto) {
+        return AppUserDetails.builder()
+                .isAccountNonExpired(appUserDetailsDto.isAccountNonExpired())
+                .isAccountNonLocked(appUserDetailsDto.isAccountNonLocked())
+                .isCredentialsNonExpired(appUserDetailsDto.isCredentialsNonExpired())
+                .isEnabled(appUserDetailsDto.isEnabled())
+                .role(appUserDetailsDto.getRole())
+                .build();
+
     }
 }

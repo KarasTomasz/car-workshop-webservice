@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class AppUserDtoMapper implements DtoMapper<AppUser, AppUserDto> {
+public class AppUserMapper implements DtoMapper<AppUser, AppUserDto> {
 
-    public AppUserDtoMapper(){ }
+    public AppUserMapper(){ }
 
     @Override
     public List<AppUserDto> mapToDtos(List<AppUser> list) {
@@ -31,6 +31,26 @@ public class AppUserDtoMapper implements DtoMapper<AppUser, AppUserDto> {
                 .street(appUser.getStreet())
                 .zipCode(appUser.getZipCode())
                 .city(appUser.getCity())
+                .build();
+    }
+
+    @Override
+    public List<AppUser> mapToEntities(List<AppUserDto> list) {
+        return list.stream()
+                .map(this::mapToEntity)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public AppUser mapToEntity(AppUserDto appUserDto) {
+        return AppUser.builder()
+                .username(appUserDto.getUsername())
+                .email(appUserDto.getEmail())
+                .firstname(appUserDto.getFirstname())
+                .lastname(appUserDto.getLastname())
+                .street(appUserDto.getStreet())
+                .zipCode(appUserDto.getZipCode())
+                .city(appUserDto.getCity())
                 .build();
     }
 }
