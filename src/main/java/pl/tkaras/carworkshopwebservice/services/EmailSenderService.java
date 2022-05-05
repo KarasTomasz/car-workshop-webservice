@@ -13,6 +13,7 @@ import javax.mail.internet.MimeMessage;
 public class EmailSenderService{
 
     private final String appOwnerEmail;
+
     private final JavaMailSender javaMailSender;
 
     public EmailSenderService(@Value("${emailSender.email}") String appOwnerEmail, JavaMailSender javaMailSender) {
