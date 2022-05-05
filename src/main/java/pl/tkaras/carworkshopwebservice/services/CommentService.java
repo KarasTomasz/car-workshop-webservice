@@ -3,74 +3,62 @@ package pl.tkaras.carworkshopwebservice.services;
 import org.springframework.stereotype.Service;
 import pl.tkaras.carworkshopwebservice.exceptions.AppUserNotFoundException;
 import pl.tkaras.carworkshopwebservice.exceptions.CommentNotFoundException;
-import pl.tkaras.carworkshopwebservice.models.dtos.CommentDto;
 import pl.tkaras.carworkshopwebservice.models.entities.AppUser;
-import pl.tkaras.carworkshopwebservice.models.mappers.impl.CommentDtoMapper;
 import pl.tkaras.carworkshopwebservice.models.entities.Comment;
 import pl.tkaras.carworkshopwebservice.repositories.CommentRepository;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CommentService {
 
     private final CommentRepository commentRepo;
-    private final CommentDtoMapper commentDtoMapper;
 
-    public CommentService(CommentRepository commentRepo, CommentDtoMapper commentDtoMapper) {
+    public CommentService(CommentRepository commentRepo) {
         this.commentRepo = commentRepo;
-        this.commentDtoMapper = commentDtoMapper;
     }
 
-    public Optional<CommentDto> getComment(Long id){
-        Comment comment = commentRepo.findById(id)
+    public Comment getComment(Long id){
+        return commentRepo.findById(id)
                 .orElseThrow(() -> new CommentNotFoundException(id));
-
-        CommentDto commentDto = commentDtoMapper.mapToDto(comment);
-        return Optional.ofNullable(commentDto);
     }
 
-    public List<CommentDto> getCommentsByUsername(String username){
+    public List<Comment> getCommentsByUsername(String username){
         if(commentRepo.existsByAppUsername(username)) {
             Long userId = commentRepo.findUserIdByUsername(username);
-            return commentDtoMapper.mapToDtos(commentRepo.findAllByAppUserId(userId));
+            return commentRepo.findAllByAppUserId(userId);
         }
         else{
             throw new AppUserNotFoundException(username);
         }
     }
 
-    public List<CommentDto> getAllComments(){
-        return commentDtoMapper.mapToDtos(commentRepo.findAll());
+    public List<Comment> getAllComments(){
+        return commentRepo.findAll();
     }
 
     @Transactional
-    public CommentDto addComment(String username, CommentDto commentdto){
+    public Comment addComment(String username, Comment comment){
         AppUser appUser = commentRepo.findUserByUsername(username)
                 .orElseThrow(() -> new AppUserNotFoundException(username));
 
-        Comment comment = new Comment().builder()
-                .description(commentdto.getDescription())
-                .createdOn(LocalDateTime.now())
-                .appUser(appUser)
-                .build();
+        comment.setAppUser(appUser);
+        comment.setCreatedOn(LocalDateTime.now());
 
-        Comment savedComment = commentRepo.save(comment);
-        return commentDtoMapper.mapToDto(savedComment);
+        return commentRepo.save(comment);
     }
 
-    public CommentDto updateComment(Long id, CommentDto commentdto){
+    public Comment updateComment(Long id, Comment comment){
 
             Comment foundComment = commentRepo.findById(id)
                             .orElseThrow(() -> new CommentNotFoundException(id));
 
-            foundComment.setDescription(commentdto.getDescription());
+            foundComment.setDescription(comment.getDescription());
             foundComment.setUpdatedOn(LocalDateTime.now());
 
-            return commentDtoMapper.mapToDto(commentRepo.save(foundComment));
+            return commentRepo.save(foundComment);
     }
 
     public void deleteComment(Long id){

@@ -4,94 +4,71 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import pl.tkaras.carworkshopwebservice.exceptions.AppUserDetailsNotFoundException;
 import pl.tkaras.carworkshopwebservice.exceptions.AppUserNotFoundException;
-import pl.tkaras.carworkshopwebservice.models.dtos.AppUserDetailsDto;
-import pl.tkaras.carworkshopwebservice.models.dtos.AppUserDto;
 import pl.tkaras.carworkshopwebservice.models.entities.AppUser;
 import pl.tkaras.carworkshopwebservice.models.entities.AppUserDetails;
 import pl.tkaras.carworkshopwebservice.models.entities.RegistrationConfirmToken;
-import pl.tkaras.carworkshopwebservice.models.mappers.impl.AppUserDetailsDtoMapper;
-import pl.tkaras.carworkshopwebservice.models.mappers.impl.AppUserDtoMapper;
 import pl.tkaras.carworkshopwebservice.repositories.AppUserRepository;
 import pl.tkaras.carworkshopwebservice.repositories.AppUserDetailsRepository;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
 public class AppUserService {
 
     private final AppUserRepository appUserRepo;
+
     private final AppUserDetailsRepository appUserDetailsRepo;
-    private final AppUserDtoMapper appUserDtoMapper;
-    private final AppUserDetailsDtoMapper appUserDetailsDtoMapper;
+
     private final PasswordEncoder passwordEncoder;
+
     private final RegistrationConfirmTokenService registrationConfirmTokenService;
 
     public AppUserService(AppUserRepository appUserRepo,
                           AppUserDetailsRepository appUserDetailsRepo,
-                          AppUserDtoMapper appUserDtoMapper,
-                          AppUserDetailsDtoMapper appUserDetailsDtoMapper,
                           PasswordEncoder passwordEncoder,
                           RegistrationConfirmTokenService registrationConfirmTokenService) {
         this.appUserRepo = appUserRepo;
         this.appUserDetailsRepo = appUserDetailsRepo;
-        this.appUserDtoMapper = appUserDtoMapper;
-        this.appUserDetailsDtoMapper = appUserDetailsDtoMapper;
         this.passwordEncoder = passwordEncoder;
         this.registrationConfirmTokenService = registrationConfirmTokenService;
     }
 
-    public List<AppUserDto> getAllUsers(){
-        return appUserDtoMapper.mapToDtos(appUserRepo.findAll());
+    public List<AppUser> getAllUsers(){
+        return appUserRepo.findAll();
     }
 
-    public Optional<AppUserDto> getUserById(Long id){
-        AppUser user = appUserRepo.findById(id)
+    public AppUser getUserById(Long id){
+        return appUserRepo.findById(id)
                 .orElseThrow(() -> new AppUserNotFoundException(id));
-        AppUserDto userDto = appUserDtoMapper.mapToDto(user);
-        return Optional.ofNullable(userDto);
     }
 
-    public Optional<AppUserDto> getUser(String username){
-        AppUser user = appUserRepo.findByUsername(username)
+    public AppUser getUser(String username){
+        return appUserRepo.findByUsername(username)
                 .orElseThrow(() -> new AppUserNotFoundException(username));
-        AppUserDto userDto = appUserDtoMapper.mapToDto(user);
-        return Optional.ofNullable(userDto);
     }
 
-    public List<AppUserDetailsDto> getAllUsersDetails(){
-        return appUserDetailsDtoMapper.mapToDtos(appUserDetailsRepo.findAll());
+    public List<AppUserDetails> getAllUsersDetails(){
+        return appUserDetailsRepo.findAll();
     }
 
-    public Optional<AppUserDetailsDto> getUserDetail(String username){
+    public AppUserDetails getUserDetail(String username){
         Long id = appUserRepo.findByUsername(username)
                 .orElseThrow(() -> new AppUserNotFoundException(username))
                 .getId();
 
-        AppUserDetails userDetails = appUserDetailsRepo.findByAppUserId(id)
+        return appUserDetailsRepo.findByAppUserId(id)
                 .orElseThrow(() -> new AppUserDetailsNotFoundException(username));
-
-        AppUserDetailsDto userDto = appUserDetailsDtoMapper.mapToDto(userDetails);
-        return Optional.ofNullable(userDto);
     }
 
-    public String signUp(AppUserDto appUserdto){
+    @Transactional
+    public String signUp(AppUser appUser){
 
-        if(!appUserRepo.existsByUsername(appUserdto.getUsername())){
+        if(!appUserRepo.existsByUsername(appUser.getUsername())){
 
-            AppUser appUser = new AppUser().builder()
-                    .username(appUserdto.getUsername())
-                    .password(passwordEncoder.encode(appUserdto.getPassword()))
-                    .email(appUserdto.getEmail())
-                    .firstname(appUserdto.getFirstname())
-                    .lastname(appUserdto.getLastname())
-                    .street(appUserdto.getStreet())
-                    .zipCode(appUserdto.getZipCode())
-                    .city(appUserdto.getCity())
-                    .build();
+            appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
 
             String token = UUID.randomUUID().toString(); //generate register confirmation token
 
@@ -117,10 +94,19 @@ public class AppUserService {
         return null;
     }
 
-    public AppUserDto updateUser(AppUser appUser){
-        AppUser newAppUser = appUserRepo.findByUsername(appUser.getUsername())
+    public AppUser updateUser(AppUser appUser){
+        AppUser foundCarAppUser = appUserRepo.findByUsername(appUser.getUsername())
                 .orElseThrow(() -> new AppUserNotFoundException(appUser.getUsername()));
-        return appUserDtoMapper.mapToDto(appUserRepo.save(newAppUser));
+
+
+        foundCarAppUser.setEmail(appUser.getEmail());
+        foundCarAppUser.setFirstname(appUser.getFirstname());
+        foundCarAppUser.setLastname(appUser.getLastname());
+        foundCarAppUser.setStreet(appUser.getStreet());
+        foundCarAppUser.setZipCode(appUser.getZipCode());
+        foundCarAppUser.setCity(appUser.getCity());
+
+        return appUserRepo.save(foundCarAppUser);
     }
 
     public void deleteUser(Long id){
