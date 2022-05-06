@@ -4,6 +4,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import pl.tkaras.carworkshopwebservice.models.entities.Car;
+import pl.tkaras.carworkshopwebservice.models.mappers.impl.CarMapper;
 import pl.tkaras.carworkshopwebservice.services.CarService;
 import pl.tkaras.carworkshopwebservice.models.dtos.CarDto;
 
@@ -16,47 +18,53 @@ public class CarController {
 
     private final CarService carService;
 
-    public CarController(CarService carService) {
+    private final CarMapper carMapper;
+
+    public CarController(CarService carService, CarMapper carMapper) {
         this.carService = carService;
+        this.carMapper = carMapper;
     }
 
     @GetMapping("")
     @PreAuthorize("hasAuthority('car:read')")
     public ResponseEntity<CarDto> getCar(@RequestParam("id") Long id){
-         return carService.getCar(id)
-                 .map(response -> ResponseEntity.ok().body(response))
-                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        CarDto carDto = carMapper.mapToDto(carService.getCar(id));
+         return new ResponseEntity<>(carDto, HttpStatus.OK);
     }
 
     @GetMapping("/all")
     @PreAuthorize("hasAuthority('car:read')")
     public ResponseEntity<List<CarDto>> getAllCars(){
-        return new ResponseEntity<>(carService.gelAllCars(), HttpStatus.OK);
+        List<Car> cars = carService.gelAllCars();
+        return new ResponseEntity<>(carMapper.mapToDtos(cars), HttpStatus.OK);
     }
 
     @GetMapping("/username/all")
     @PreAuthorize("hasAuthority('car:read')")
     public ResponseEntity<List<CarDto>> getCarsByUsername(@RequestParam("username") String username){
-        return new ResponseEntity<>(carService.gelAllCarsByUsername(username), HttpStatus.OK);
+        List<Car> cars = carService.gelAllCarsByUsername(username);
+        return new ResponseEntity<>(carMapper.mapToDtos(cars), HttpStatus.OK);
     }
 
     @PostMapping("")
     @PreAuthorize("hasAuthority('car:add')")
     public ResponseEntity<CarDto> addCar(@RequestBody CarDto cardto){
-        return new ResponseEntity<>(carService.addCar(cardto), HttpStatus.CREATED);
+        Car car = carService.addCar(carMapper.mapToEntity(cardto));
+        return new ResponseEntity<>(carMapper.mapToDto(car), HttpStatus.CREATED);
     }
 
     @PutMapping("")
     @PreAuthorize("hasAuthority('car:update')")
     public ResponseEntity<CarDto> updateCar(@RequestParam("id") Long id ,@RequestBody CarDto cardto){
-        return ResponseEntity.ok().body(carService.updateCar(id, cardto));
+        Car car = carService.updateCar(id, carMapper.mapToEntity(cardto));
+        return new ResponseEntity<>(carMapper.mapToDto(car), HttpStatus.OK);
     }
 
     @DeleteMapping("")
     @PreAuthorize("hasAuthority('car:delete')")
-    public ResponseEntity<Object> deleteCar(@RequestParam("id") Long id){
+    public ResponseEntity<?> deleteCar(@RequestParam("id") Long id){
         carService.deleteCar(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 
 }

@@ -4,6 +4,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import pl.tkaras.carworkshopwebservice.models.entities.Comment;
+import pl.tkaras.carworkshopwebservice.models.mappers.impl.CommentMapper;
 import pl.tkaras.carworkshopwebservice.services.CommentService;
 import pl.tkaras.carworkshopwebservice.models.dtos.CommentDto;
 
@@ -16,47 +18,56 @@ public class CommentController {
 
     private final CommentService commentService;
 
-    public CommentController(CommentService commentService) {
+    private final CommentMapper commentMapper;
+
+    public CommentController(CommentService commentService, CommentMapper commentMapper) {
         this.commentService = commentService;
+        this.commentMapper = commentMapper;
     }
 
     @GetMapping("")
     @PreAuthorize("hasAuthority('comment:read')")
     public ResponseEntity<CommentDto> getComment(@RequestParam("id") Long id){
-        return commentService.getComment(id)
-                .map(response -> ResponseEntity.ok().body(response))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        CommentDto commentDto = commentMapper.mapToDto(commentService.getComment(id));
+        return new ResponseEntity<>(commentDto, HttpStatus.OK);
     }
 
     @GetMapping("/username/all")
     @PreAuthorize("hasAuthority('comment:read')")
     public ResponseEntity<List<CommentDto>> getCommentsByUsername(@RequestParam String username){
-        return new ResponseEntity<>(commentService.getCommentsByUsername(username), HttpStatus.OK);
+        List<Comment> comments = commentService.getCommentsByUsername(username);
+        List<CommentDto> commentDtos = commentMapper.mapToDtos(comments);
+        return new ResponseEntity<>(commentDtos, HttpStatus.OK);
     }
 
     @GetMapping("/all")
     @PreAuthorize("hasAuthority('comment:read')")
     public ResponseEntity<List<CommentDto>> getAllComments(){
-        return new ResponseEntity<>(commentService.getAllComments(), HttpStatus.OK);
+        List<CommentDto> commentDtos = commentMapper.mapToDtos(commentService.getAllComments());
+        return new ResponseEntity<>(commentDtos, HttpStatus.OK);
     }
 
     @PostMapping("")
     @PreAuthorize("hasAuthority('comment:write')")
-    public ResponseEntity<CommentDto> addComment(@RequestParam("username") String username, @RequestBody CommentDto comment){
-        return new ResponseEntity<>(commentService.addComment(username, comment), HttpStatus.OK);
+    public ResponseEntity<CommentDto> addComment(@RequestParam("username") String username, @RequestBody CommentDto commentDto){
+        Comment receivedComment= commentMapper.mapToEntity(commentDto);
+        Comment commentToSend = commentService.addComment(username, receivedComment);
+        return new ResponseEntity<>(commentMapper.mapToDto(commentToSend), HttpStatus.OK);
     }
 
     @PutMapping("")
     @PreAuthorize("hasAuthority('comment:write')")
-    public ResponseEntity<CommentDto> updateComment(@RequestParam("id") Long id, @RequestBody CommentDto comment){
-        return ResponseEntity.ok().body(commentService.updateComment(id, comment));
+    public ResponseEntity<CommentDto> updateComment(@RequestParam("id") Long id, @RequestBody CommentDto commentDto){
+        Comment receivedComment= commentMapper.mapToEntity(commentDto);
+        Comment commentToSend = commentService.updateComment(id, receivedComment);
+        return new ResponseEntity<>(commentMapper.mapToDto(commentToSend), HttpStatus.OK);
     }
 
     @DeleteMapping("")
     @PreAuthorize("hasAuthority('comment:delete')")
-    public ResponseEntity<Object> deleteComment(@RequestParam("id") Long id){
+    public ResponseEntity<?> deleteComment(@RequestParam("id") Long id){
         commentService.deleteComment(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 
 }
