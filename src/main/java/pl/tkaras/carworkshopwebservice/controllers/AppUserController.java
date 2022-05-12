@@ -1,5 +1,6 @@
 package pl.tkaras.carworkshopwebservice.controllers;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,6 +18,7 @@ import pl.tkaras.carworkshopwebservice.models.dtos.RegistrationConfirmTokenDto;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/user")
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -31,14 +33,6 @@ public class AppUserController {
     private final AppUserDetailsMapper appUserDetailsMapper;
 
     private final RegistrationConfirmTokenMapper confirmTokenMapper;
-
-    public AppUserController(AppUserService appUserService, RegistrationService registrationService, AppUserMapper appUserMapper, AppUserDetailsMapper appUserDetailsMapper, RegistrationConfirmTokenMapper confirmTokenMapper) {
-        this.appUserService = appUserService;
-        this.registrationService = registrationService;
-        this.appUserMapper = appUserMapper;
-        this.appUserDetailsMapper = appUserDetailsMapper;
-        this.confirmTokenMapper = confirmTokenMapper;
-    }
 
     @GetMapping("/all")
     @PreAuthorize("hasAuthority('user:readAll')")

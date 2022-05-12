@@ -1,5 +1,6 @@
 package pl.tkaras.carworkshopwebservice.controllers;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -11,6 +12,7 @@ import pl.tkaras.carworkshopwebservice.models.dtos.CarDto;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/car")
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -19,11 +21,6 @@ public class CarController {
     private final CarService carService;
 
     private final CarMapper carMapper;
-
-    public CarController(CarService carService, CarMapper carMapper) {
-        this.carService = carService;
-        this.carMapper = carMapper;
-    }
 
     @GetMapping("")
     @PreAuthorize("hasAuthority('car:read')")

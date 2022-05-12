@@ -1,5 +1,6 @@
 package pl.tkaras.carworkshopwebservice.controllers;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -11,6 +12,7 @@ import pl.tkaras.carworkshopwebservice.models.dtos.CommentDto;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/comment")
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -19,11 +21,6 @@ public class CommentController {
     private final CommentService commentService;
 
     private final CommentMapper commentMapper;
-
-    public CommentController(CommentService commentService, CommentMapper commentMapper) {
-        this.commentService = commentService;
-        this.commentMapper = commentMapper;
-    }
 
     @GetMapping("")
     @PreAuthorize("hasAuthority('comment:read')")
