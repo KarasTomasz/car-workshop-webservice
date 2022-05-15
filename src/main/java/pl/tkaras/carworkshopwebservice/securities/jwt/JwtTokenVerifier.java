@@ -5,12 +5,12 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
-import pl.tkaras.carworkshopwebservice.configs.JwtConfig;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -22,39 +22,36 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 public class JwtTokenVerifier extends OncePerRequestFilter {
 
-    private JwtConfig jwtConfig;
-
-    public JwtTokenVerifier(JwtConfig jwtConfig) {
-        this.jwtConfig = jwtConfig;
-    }
+    private final JwtUtils jwtUtils;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        String authorizationHeader = request.getHeader(jwtConfig.getTokenHeader());
+        String authorizationHeader = request.getHeader(jwtUtils.getTokenHeader());
 
         if(authorizationHeader == null ||
                 authorizationHeader.isEmpty() ||
-                !authorizationHeader.startsWith(jwtConfig.getTokenPrefix())){
+                !authorizationHeader.startsWith(jwtUtils.getTokenPrefix())){
             filterChain.doFilter(request, response);
             return;
         }
 
-        String token = authorizationHeader.replace(jwtConfig.getTokenPrefix(), "");
+        String token = authorizationHeader.replace(jwtUtils.getTokenPrefix(), "");
 
         try {
             Jws<Claims> claimsJws = Jwts.parserBuilder()
-                    .setSigningKey(Keys.hmacShaKeyFor(jwtConfig.getTokenSecretKey().getBytes()))
+                    .setSigningKey(Keys.hmacShaKeyFor(jwtUtils.getTokenSecretKey().getBytes()))
                     .build()
                     .parseClaimsJws(token);
 
             Claims body = claimsJws.getBody();
             String username = body.getSubject();
-            var authorities = (List<Map<String, String>>) body.get("authorities");
+            List<Map<String, String>> authorities = (List<Map<String, String>>) body.get("authorities");
 
             Set<SimpleGrantedAuthority> simpleGrantedAuthorities = authorities.stream()
                     .map(auth -> new SimpleGrantedAuthority(auth.get("authority")))
