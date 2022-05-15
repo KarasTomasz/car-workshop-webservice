@@ -1,5 +1,6 @@
 package pl.tkaras.carworkshopwebservice.services;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -9,17 +10,14 @@ import org.springframework.stereotype.Service;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
+@RequiredArgsConstructor
 @Service
 public class EmailSenderService{
 
-    private final String appOwnerEmail;
+    @Value("${emailSender.email}")
+    private String appOwnerEmail;
 
     private final JavaMailSender javaMailSender;
-
-    public EmailSenderService(@Value("${emailSender.email}") String appOwnerEmail, JavaMailSender javaMailSender) {
-        this.appOwnerEmail = appOwnerEmail;
-        this.javaMailSender = javaMailSender;
-    }
 
     @Async
     public void send(String email, String content, boolean isHtmlContent) throws MessagingException {
@@ -31,5 +29,4 @@ public class EmailSenderService{
         mimeMessageHelper.setFrom(appOwnerEmail);
         javaMailSender.send(mimeMessage);
     }
-
 }
