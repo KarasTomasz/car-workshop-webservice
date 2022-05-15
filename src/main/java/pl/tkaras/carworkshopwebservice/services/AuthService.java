@@ -1,29 +1,43 @@
 package pl.tkaras.carworkshopwebservice.services;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import pl.tkaras.carworkshopwebservice.exceptions.EmailSendingException;
 import pl.tkaras.carworkshopwebservice.exceptions.TokenNotFoundException;
 import pl.tkaras.carworkshopwebservice.models.entities.AppUser;
 import pl.tkaras.carworkshopwebservice.models.entities.RegistrationConfirmToken;
 import pl.tkaras.carworkshopwebservice.repositories.RegistrationConfirmTokenRepository;
+import pl.tkaras.carworkshopwebservice.securities.jwt.JwtUtils;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 
+@RequiredArgsConstructor
 @Service
-public class RegistrationService {
+public class AuthService {
+
+    private final JwtUtils jwtUtils;
+
+    private final AuthenticationManager authenticationManager;
 
     private final RegistrationConfirmTokenRepository confirmTokenRepo;
 
-     private final AppUserService appUserService;
+    private final AppUserService appUserService;
 
     private final EmailSenderService emailSenderService;
 
+    public String login(String username, String password){
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(username, password));
 
-    public RegistrationService(RegistrationConfirmTokenRepository confirmTokenRepo, AppUserService appUserService, EmailSenderService emailSenderService) {
-        this.confirmTokenRepo = confirmTokenRepo;
-        this.appUserService = appUserService;
-        this.emailSenderService = emailSenderService;
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwtToken = jwtUtils.generateJwtToken(authentication);
+
+        return (jwtUtils.getTokenPrefix() + jwtToken);
     }
 
     //@Transactional
@@ -34,7 +48,7 @@ public class RegistrationService {
         if(token != null){
             try {
                 String link = "http://localhost:8081/api/v1/user/confirm?token=" + token;
-                emailSenderService.send(appUser.getEmail(), buildEmailTemplate(appUser.getFirstname(), link), true);
+                emailSenderService.send(appUser.getEmail(), buildEmailTemplate(appUser.getUsername(), link), true);
             }
             catch (Exception e){
                 throw new EmailSendingException(appUser.getEmail());
@@ -68,6 +82,4 @@ public class RegistrationService {
         content = content.replace("[[URL]]", link);
         return content;
     }
-
-
 }
