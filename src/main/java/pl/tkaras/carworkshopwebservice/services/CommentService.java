@@ -1,5 +1,6 @@
 package pl.tkaras.carworkshopwebservice.services;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.tkaras.carworkshopwebservice.exceptions.AppUserNotFoundException;
 import pl.tkaras.carworkshopwebservice.exceptions.CommentNotFoundException;
@@ -11,14 +12,11 @@ import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class CommentService {
 
     private final CommentRepository commentRepo;
-
-    public CommentService(CommentRepository commentRepo) {
-        this.commentRepo = commentRepo;
-    }
 
     public Comment getComment(Long id){
         return commentRepo.findById(id)
