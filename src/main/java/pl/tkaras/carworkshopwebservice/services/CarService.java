@@ -1,5 +1,6 @@
 package pl.tkaras.carworkshopwebservice.services;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.tkaras.carworkshopwebservice.exceptions.AppUserNotFoundException;
 import pl.tkaras.carworkshopwebservice.exceptions.CarNotFoundException;
@@ -10,14 +11,11 @@ import pl.tkaras.carworkshopwebservice.repositories.CarRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class CarService {
 
     private final CarRepository carRepo;
-
-    public CarService(CarRepository carRepo) {
-        this.carRepo = carRepo;
-    }
 
     public Car getCar(Long id){
         return carRepo.findById(id)
@@ -45,7 +43,7 @@ public class CarService {
 
         foundCar.setModel(car.getMark());
         foundCar.setModel(car.getModel());
-        foundCar.setDescription(car.getDescription());
+       // foundCar.setDescription(car.getDescription());
         foundCar.setCreatedOn(foundCar.getCreatedOn());
         foundCar.setUpdatedOn(LocalDateTime.now());
         foundCar.setAppUser(foundCar.getAppUser());
@@ -61,5 +59,4 @@ public class CarService {
             throw new CarNotFoundException(id);
         }
     }
-
 }
