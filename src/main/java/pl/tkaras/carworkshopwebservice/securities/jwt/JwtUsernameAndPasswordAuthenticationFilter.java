@@ -1,32 +1,24 @@
 package pl.tkaras.carworkshopwebservice.securities.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import pl.tkaras.carworkshopwebservice.configs.JwtConfig;
 
 import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Date;
 
+@RequiredArgsConstructor
 public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
-    private final JwtConfig jwtConfig;
 
-    public JwtUsernameAndPasswordAuthenticationFilter(AuthenticationManager authenticationManager,
-                                                      JwtConfig jwtConfig) {
-        this.authenticationManager = authenticationManager;
-        this.jwtConfig = jwtConfig;
-    }
+    private final JwtUtils jwtUtils;
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -53,21 +45,12 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
     protected void successfulAuthentication(HttpServletRequest request,
                                             HttpServletResponse response,
                                             FilterChain chain,
-                                            Authentication authResult) throws IOException, ServletException {
+                                            Authentication authResult){
         //create token
-        String token = Jwts.builder()
-                .setSubject(authResult.getName()) //header
-                .claim("authorities", authResult.getAuthorities()) //body
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + jwtConfig.getExpirationTime()))
-                .signWith(Keys.hmacShaKeyFor(jwtConfig.getTokenSecretKey().getBytes())) //sign
-                .compact();
+        String token = jwtUtils.generateJwtToken(authResult);
 
         //send token to client
-        response.addHeader(jwtConfig.getTokenHeader(), jwtConfig.getTokenPrefix() + token);
+        response.addHeader(jwtUtils.getTokenHeader(), jwtUtils.getTokenPrefix() + token);
 
     }
-
-
-
 }
