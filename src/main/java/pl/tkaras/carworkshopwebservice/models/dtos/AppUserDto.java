@@ -1,6 +1,5 @@
 package pl.tkaras.carworkshopwebservice.models.dtos;
 
-import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,25 +11,13 @@ import lombok.NoArgsConstructor;
 @Data
 public class AppUserDto {
 
-    @ApiModelProperty(readOnly = true)
-    private Long id;
+    private String role;
 
-    @ApiModelProperty(required = true)
-    private String username;
+    private boolean isAccountNonExpired;
 
-    @ApiModelProperty(required = true)
-    private String password;
+    private boolean isAccountNonLocked;
 
-    @ApiModelProperty(required = true)
-    private String email;
+    private boolean isCredentialsNonExpired;
 
-    private String firstname;
-
-    private String lastname;
-
-    private String street;
-
-    private String zipCode;
-
-    private String city;
+    private boolean isEnabled;
 }
