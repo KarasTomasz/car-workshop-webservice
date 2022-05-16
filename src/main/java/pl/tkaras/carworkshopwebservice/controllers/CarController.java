@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pl.tkaras.carworkshopwebservice.models.entities.Car;
-import pl.tkaras.carworkshopwebservice.models.mappers.impl.CarMapper;
+import pl.tkaras.carworkshopwebservice.models.mappers.ICarMapper;
 import pl.tkaras.carworkshopwebservice.services.CarService;
 import pl.tkaras.carworkshopwebservice.models.dtos.CarDto;
 
@@ -20,7 +20,7 @@ public class CarController {
 
     private final CarService carService;
 
-    private final CarMapper carMapper;
+    private final ICarMapper carMapper;
 
     @GetMapping("")
     @PreAuthorize("hasAuthority('car:read')")
