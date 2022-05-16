@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pl.tkaras.carworkshopwebservice.models.entities.Comment;
-import pl.tkaras.carworkshopwebservice.models.mappers.impl.CommentMapper;
+import pl.tkaras.carworkshopwebservice.models.mappers.ICommentMapper;
 import pl.tkaras.carworkshopwebservice.services.CommentService;
 import pl.tkaras.carworkshopwebservice.models.dtos.CommentDto;
 
@@ -20,7 +20,7 @@ public class CommentController {
 
     private final CommentService commentService;
 
-    private final CommentMapper commentMapper;
+    private final ICommentMapper commentMapper;
 
     @GetMapping("")
     @PreAuthorize("hasAuthority('comment:read')")
