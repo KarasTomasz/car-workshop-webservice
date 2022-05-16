@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
+import java.util.Set;
 
 @Builder
 @Data
@@ -26,7 +27,18 @@ public class AppUser {
     @Column(nullable = false)
     private String email;
 
-    private String firstname;
+    private String role = "CLIENT";
 
-    private String lastname;
+    private boolean isAccountNonExpired = false;
+
+    private boolean isAccountNonLocked = false;
+
+    private boolean isCredentialsNonExpired = false;
+
+    private boolean isEnabled = false;
+
+    @OneToMany
+    @JoinColumn(name = "appUserAddressId")
+    Set<AppUserAddress> appUserAddresses;
+
 }
