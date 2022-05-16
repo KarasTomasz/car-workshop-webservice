@@ -5,84 +5,58 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import pl.tkaras.carworkshopwebservice.models.entities.AppUser;
-import pl.tkaras.carworkshopwebservice.models.entities.AppUserDetails;
-import pl.tkaras.carworkshopwebservice.models.mappers.impl.AppUserDetailsMapper;
-import pl.tkaras.carworkshopwebservice.models.mappers.impl.AppUserMapper;
-import pl.tkaras.carworkshopwebservice.models.mappers.impl.RegistrationConfirmTokenMapper;
+import pl.tkaras.carworkshopwebservice.models.dtos.AppUserAddressDto;
+import pl.tkaras.carworkshopwebservice.models.mappers.IAppUserAddressMapper;
 import pl.tkaras.carworkshopwebservice.services.AppUserService;
-import pl.tkaras.carworkshopwebservice.services.RegistrationService;
-import pl.tkaras.carworkshopwebservice.models.dtos.AppUserDetailsDto;
-import pl.tkaras.carworkshopwebservice.models.dtos.AppUserDto;
-import pl.tkaras.carworkshopwebservice.models.dtos.RegistrationConfirmTokenDto;
 
 import java.util.List;
 
-@RequiredArgsConstructor
-@RestController
-@RequestMapping("/api/v1/user")
 @CrossOrigin(origins = "*", maxAge = 3600)
+@RequiredArgsConstructor
+@RequestMapping("/api/v1/user")
+@RestController
 public class AppUserController {
 
     private final AppUserService appUserService;
 
-    private final RegistrationService registrationService;
-
-    private final AppUserMapper appUserMapper;
-
-    private final AppUserDetailsMapper appUserDetailsMapper;
-
-    private final RegistrationConfirmTokenMapper confirmTokenMapper;
+    private final IAppUserAddressMapper appUserAddressMapper;
 
     @GetMapping("/all")
     @PreAuthorize("hasAuthority('user:readAll')")
-    public List<AppUserDto> getAllUsers(){
-        return appUserMapper.mapToDtos(appUserService.getAllUsers());
+    public List<AppUserAddressDto> getAllUsers(){
+        return appUserAddressMapper.mapToDtos(appUserService.getAllUsers());
     }
 
     @GetMapping("")
     @PreAuthorize("hasAuthority('user:read')")
-    public ResponseEntity<AppUserDto> getAppUser(@RequestParam("username") String username){
-        AppUser appUser = appUserService.getUser(username);
-        return new ResponseEntity<>(appUserMapper.mapToDto(appUser), HttpStatus.OK);
+    public ResponseEntity<AppUserAddressDto> getAppUser(@RequestParam("id") Long id){
+        AppUserAddressDto appUserAddressDtoDto = appUserAddressMapper.mapToDto(appUserService.getUser(id));
+        return new ResponseEntity<>(appUserAddressDtoDto, HttpStatus.OK);
     }
 
     @GetMapping("/details/all")
     @PreAuthorize("hasAuthority('user:readAll')")
-    public List<AppUserDetailsDto> getAllUsersDetails(){
-        return appUserDetailsMapper.mapToDtos(appUserService.getAllUsersDetails());
+    public List<AppUserAddressDto> getAllUsersDetails(){
+        return appUserAddressMapper.mapToDtos(appUserService.getAllUsers());
     }
 
    @GetMapping("/details/")
     @PreAuthorize("hasAuthority('user:read')")
-    public ResponseEntity<AppUserDetailsDto> getAppUserDetail(@RequestParam("username") String username){
-       AppUserDetails appUserDetails = appUserService.getUserDetail(username);
-        return new ResponseEntity<>(appUserDetailsMapper.mapToDto(appUserDetails), HttpStatus.OK);
-    }
-
-    @PostMapping(path = "/confirm")
-    public ResponseEntity<?> confirm(@RequestParam("token") String token) {
-        registrationService.confirm(token);
-        return ResponseEntity.ok().build();
-    }
-
-    @PostMapping("/registration")
-    public ResponseEntity<RegistrationConfirmTokenDto> addAppUser(@RequestBody AppUserDto appUserdto){
-        AppUser appUser = appUserMapper.mapToEntity(appUserdto);
-        RegistrationConfirmTokenDto registrationConfirmTokenDto = confirmTokenMapper.mapToDto(registrationService.register(appUser));
-        return new ResponseEntity<>(registrationConfirmTokenDto, HttpStatus.CREATED);
+    public ResponseEntity<AppUserAddressDto> getAppUserDetail(@RequestParam("id") Long id){
+        AppUserAddressDto appUserAddressDto = appUserAddressMapper.mapToDto(appUserService.getUser(id));
+        return new ResponseEntity<>(appUserAddressDto, HttpStatus.OK);
     }
 
     @PutMapping("")
     @PreAuthorize("hasAuthority('user:update')")
-    public ResponseEntity<AppUserDto> updateAppUserRole(@RequestBody AppUserDto appUserdto){
-        AppUser appUser = appUserService.updateUser(appUserMapper.mapToEntity(appUserdto));
-        return ResponseEntity.ok().body(appUserMapper.mapToDto(appUser));
+    public ResponseEntity<AppUserAddressDto> updateAppUserRole(@RequestParam("id") Long id, @RequestBody AppUserAddressDto userAddressDto){
+        AppUserAddressDto appUserAddressDto = appUserAddressMapper.mapToDto(appUserService.updateUser(id, appUserAddressMapper.mapToEntity(userAddressDto)));
+        return ResponseEntity.ok().body(appUserAddressDto);
     }
 
     @DeleteMapping("")
     @PreAuthorize("hasAuthority('user:delete')")
-    public ResponseEntity<Object> deleteAppUser(@RequestParam("id") Long id){
+    public ResponseEntity<?> deleteAppUser(@RequestParam("id") Long id){
         appUserService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
