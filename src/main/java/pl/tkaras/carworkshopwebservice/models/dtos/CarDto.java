@@ -1,9 +1,13 @@
 package pl.tkaras.carworkshopwebservice.models.dtos;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @Data
 public class CarDto {
