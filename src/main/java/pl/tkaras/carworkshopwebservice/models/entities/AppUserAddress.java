@@ -2,9 +2,7 @@ package pl.tkaras.carworkshopwebservice.models.entities;
 
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 
 @Builder
 @Data
@@ -13,13 +11,20 @@ import javax.persistence.OneToOne;
 @Entity
 public class AppUserAddress {
 
+    @Id
+    private Long id;
+
+    private String firstName;
+
+    private String lastName;
+
     private String street;
 
     private String zipCode;
 
     private String city;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "appUserId")
     AppUser appUser;
 }
