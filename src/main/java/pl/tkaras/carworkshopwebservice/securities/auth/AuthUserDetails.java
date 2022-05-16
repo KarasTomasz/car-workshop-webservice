@@ -1,22 +1,18 @@
 package pl.tkaras.carworkshopwebservice.securities.auth;
 
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import pl.tkaras.carworkshopwebservice.models.entities.AppUser;
-import pl.tkaras.carworkshopwebservice.models.entities.AppUserDetails;
 import pl.tkaras.carworkshopwebservice.securities.AppUserRole;
 
 import java.util.Collection;
 
+@RequiredArgsConstructor
 public class AuthUserDetails implements UserDetails {
 
     private final AppUser appUser;
-    private final AppUserDetails userDetails;
-
-    public AuthUserDetails(AppUser appUser, AppUserDetails userDetails){
-        this.appUser = appUser;
-        this.userDetails = userDetails;
-    }
 
     @Override
     public String getUsername() {
@@ -31,27 +27,27 @@ public class AuthUserDetails implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
-        String role = userDetails.getRole();
+        String role = appUser.getRole();
         return AppUserRole.valueOf(role).getGrantedAuthority();
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return userDetails.isAccountNonExpired();
+        return appUser.isAccountNonExpired();
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return userDetails.isAccountNonLocked();
+        return appUser.isAccountNonLocked();
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return userDetails.isCredentialsNonExpired();
+        return appUser.isCredentialsNonExpired();
     }
 
     @Override
     public boolean isEnabled() {
-        return userDetails.isEnabled();
+        return appUser.isEnabled();
     }
 }
