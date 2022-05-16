@@ -1,17 +1,17 @@
 package pl.tkaras.carworkshopwebservice.repositories;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import pl.tkaras.carworkshopwebservice.models.entities.AppUser;
 
-import java.util.List;
 import java.util.Optional;
 
-public interface AppUserRepository {
+@Repository
+public interface AppUserRepository extends JpaRepository<AppUser, Long> {
 
-    Optional<AppUser> findById(Long id);
     Optional<AppUser> findByUsername(String username);
-    boolean existsById(Long id);
+
     boolean existsByUsername(String username);
-    List<AppUser> findAll();
-    AppUser save(AppUser appUser);
-    void deleteById(Long id);
+
+    void deleteByUsername(String username);
 }
