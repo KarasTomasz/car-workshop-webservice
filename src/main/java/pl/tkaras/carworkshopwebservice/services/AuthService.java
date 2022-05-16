@@ -65,7 +65,7 @@ public class AuthService {
 
         if(token != null){
             try {
-                String link = "http://localhost:8081/api/v1/user/confirm?token=" + token;
+                String link = "http://localhost:8081/api/v1/auth/confirm?token=" + token;
                 emailSenderService.send(appUser.getEmail(), buildEmailTemplate(appUser.getUsername(), link), true);
             }
             catch (Exception e){
