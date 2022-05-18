@@ -34,7 +34,12 @@ public class CarService {
     }
 
     public Car addCar(Car car){
-        return carRepo.save(car);
+        if(carRepo.findByUsername(car.getAppUser().getUsername()).isPresent()){
+            return carRepo.save(car);
+        }
+        else{
+            throw new AppUserNotFoundException(car.getAppUser().getUsername());
+        }
     }
 
     public Car updateCar(Long id, Car car){
