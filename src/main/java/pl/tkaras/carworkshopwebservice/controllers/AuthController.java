@@ -23,7 +23,7 @@ public class AuthController {
 
     private final IRegistrationConfirmTokenMapper confirmTokenMapper;
 
-    @PostMapping("/login")
+    @GetMapping("/login")
     public ResponseEntity<String> signIn(@RequestParam String username, @RequestParam String password){
         String token =  authService.login(username, password);
         return new ResponseEntity<>(token, HttpStatus.OK);
@@ -36,7 +36,7 @@ public class AuthController {
         return new ResponseEntity<>(confirmTokenDto, HttpStatus.CREATED);
     }
 
-    @PostMapping(path = "/confirm")
+    @GetMapping(path = "/confirm")
     public ResponseEntity<?> confirm(@RequestParam("token") String token) {
         authService.confirm(token);
         return ResponseEntity.ok().build();
