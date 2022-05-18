@@ -2,8 +2,7 @@ package pl.tkaras.carworkshopwebservice.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import pl.tkaras.carworkshopwebservice.exceptions.AppUserAddressNotFound;
-import pl.tkaras.carworkshopwebservice.exceptions.AppUserNotFoundException;
+import pl.tkaras.carworkshopwebservice.exceptions.AppUserAddressNotFoundException;
 import pl.tkaras.carworkshopwebservice.models.entities.AppUserAddress;
 import pl.tkaras.carworkshopwebservice.repositories.AppUserAddressRepository;
 
@@ -11,7 +10,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
-public class AppUserService {
+public class AppUserAddressService {
 
     private final AppUserAddressRepository appUserAddressRepo;
 
@@ -21,13 +20,13 @@ public class AppUserService {
 
     public AppUserAddress getUser(Long id){
         return appUserAddressRepo.findById(id)
-                .orElseThrow(() -> new AppUserNotFoundException(id));
+                .orElseThrow(() -> new AppUserAddressNotFoundException(id));
     }
 
     public AppUserAddress updateUser(Long id, AppUserAddress appUserAddress){
 
         AppUserAddress foundAppUserAddress = appUserAddressRepo.findById(id)
-                .orElseThrow(() -> new AppUserAddressNotFound(id));
+                .orElseThrow(() -> new AppUserAddressNotFoundException(id));
 
         foundAppUserAddress.setFirstName(appUserAddress.getFirstName());
         foundAppUserAddress.setLastName(appUserAddress.getLastName());
@@ -43,7 +42,7 @@ public class AppUserService {
             appUserAddressRepo.deleteById(id);
         }
         else {
-            throw new AppUserAddressNotFound(id);
+            throw new AppUserAddressNotFoundException(id);
         }
     }
 }
