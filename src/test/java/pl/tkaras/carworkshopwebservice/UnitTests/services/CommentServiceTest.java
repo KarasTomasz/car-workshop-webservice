@@ -1,4 +1,4 @@
-package pl.tkaras.carworkshopwebservice.services;
+package pl.tkaras.carworkshopwebservice.UnitTests.services;
 
 import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,11 +8,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pl.tkaras.carworkshopwebservice.exceptions.AppUserNotFoundException;
 import pl.tkaras.carworkshopwebservice.exceptions.CommentNotFoundException;
-import pl.tkaras.carworkshopwebservice.models.dtos.CommentDto;
 import pl.tkaras.carworkshopwebservice.models.entities.AppUser;
 import pl.tkaras.carworkshopwebservice.models.entities.Comment;
-import pl.tkaras.carworkshopwebservice.models.mappers.impl.CommentDtoMapper;
 import pl.tkaras.carworkshopwebservice.repositories.CommentRepository;
+import pl.tkaras.carworkshopwebservice.services.CommentService;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -31,15 +30,13 @@ class CommentServiceTest {
 
     @Mock
     private CommentRepository commentRepository;
+
     @Mock
     private CommentService commentService;
-    @Mock
-    private CommentDtoMapper commentDtoMapper;
 
     @BeforeEach
     void init(){
-        commentDtoMapper = new CommentDtoMapper();
-        commentService = new CommentService(commentRepository, commentDtoMapper);
+        commentService = new CommentService(commentRepository);
     }
 
     @Test
@@ -48,10 +45,10 @@ class CommentServiceTest {
         when(commentRepository.findAll()).thenReturn(prepareCommentData());
 
         //when
-        List<CommentDto> commentDtos = commentService.getAllComments();
+        List<Comment> comments = commentService.getAllComments();
 
         //then
-        assertEquals(prepareCommentDtoData().size(), commentDtos.size());
+        assertEquals(prepareCommentData().size(), comments.size());
     }
 
     @Test
@@ -60,10 +57,10 @@ class CommentServiceTest {
         when(commentRepository.findAll()).thenReturn(new ArrayList<>());
 
         //when
-        List<CommentDto> commentDtos = commentService.getAllComments();
+        List<Comment> comments = commentService.getAllComments();
 
         //then
-        assertEquals(new ArrayList<>(), commentDtos);
+        assertEquals(new ArrayList<>(), comments);
     }
 
     @Test
@@ -73,10 +70,10 @@ class CommentServiceTest {
         when(commentRepository.findAllByAppUserId(anyLong())).thenReturn(prepareCommentData());
 
         //when
-        List<CommentDto> commentDtos = commentService.getCommentsByUsername(prepareComment_1().getAppUser().getUsername());
+        List<Comment> comments = commentService.getCommentsByUsername(prepareComment_1().getAppUser().getUsername());
 
         //then
-        assertEquals(prepareCommentDtoData().size(), commentDtos.size());
+        assertEquals(prepareCommentData().size(), comments.size());
     }
 
     @Test
@@ -99,10 +96,10 @@ class CommentServiceTest {
         when(commentRepository.findById(anyLong())).thenReturn(Optional.of(prepareComment_1()));
 
         //when
-        Optional<CommentDto> commentDto = commentService.getComment(1L);
+        Comment comment = commentService.getComment(1L);
 
         //then
-        assertEquals(prepareComment_1().getAppUser().getUsername(), commentDto.orElseThrow().getUsername());
+        assertEquals(prepareComment_1().getAppUser().getUsername(), comment.getAppUser().getUsername());
     }
 
     @Test
@@ -127,10 +124,11 @@ class CommentServiceTest {
         when(commentRepository.save(any())).thenReturn(prepareComment_1());
 
         //when
-        CommentDto commentDto = commentService.addComment(prepareComment_1().getAppUser().getUsername(), prepareCommentDto_1());
+        Comment comment = commentService.addComment(prepareComment_1().getAppUser().getUsername(), prepareComment_1());
 
         //then
-        assertEquals(prepareCommentDto_1().getUsername(), commentDto.getUsername());
+        assertEquals(prepareComment_1().getAppUser().getUsername(), comment.getAppUser().getUsername());
+        assertEquals(prepareComment_1().getDescription(), comment.getDescription());
     }
 
     @Test
@@ -139,7 +137,7 @@ class CommentServiceTest {
         when(commentRepository.findUserByUsername(anyString())).thenReturn(Optional.empty());
 
         //when
-        var exception = AssertionsForClassTypes.catchThrowable(() -> commentService.addComment(prepareComment_1().getAppUser().getUsername(), prepareCommentDto_1()));
+        var exception = AssertionsForClassTypes.catchThrowable(() -> commentService.addComment(prepareComment_1().getAppUser().getUsername(), prepareComment_1()));
 
         //then
         assertThat(exception)
@@ -154,10 +152,11 @@ class CommentServiceTest {
         when(commentRepository.save(any())).thenReturn(prepareComment_1());
 
         //when
-        CommentDto commentDto = commentService.updateComment(1L, prepareCommentDto_1());
+        Comment comment = commentService.updateComment(1L, prepareComment_1());
 
         //then
-        assertEquals(prepareComment_1().getAppUser().getUsername(), commentDto.getUsername());
+        assertEquals(prepareComment_1().getAppUser().getUsername(), comment.getAppUser().getUsername());
+        assertEquals(prepareComment_1().getDescription(), comment.getDescription());
     }
 
     @Test
@@ -166,7 +165,7 @@ class CommentServiceTest {
         when(commentRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         //when
-        var exception = AssertionsForClassTypes.catchThrowable(() -> commentService.updateComment(1L, prepareCommentDto_1()));
+        var exception = AssertionsForClassTypes.catchThrowable(() -> commentService.updateComment(1L, prepareComment_1()));
 
         //then
         assertThat(exception)
@@ -179,11 +178,6 @@ class CommentServiceTest {
                 .username("client 1")
                 .password("password")
                 .email("client1@gmail.com")
-                .firstname("Jan")
-                .lastname("Kowalski")
-                .street("Kosciuszki")
-                .zipCode("50-555")
-                .city("Wroclaw")
                 .build();
     }
 
@@ -210,7 +204,7 @@ class CommentServiceTest {
                 .build();
     }
 
-    List<CommentDto> prepareCommentDtoData(){
+/*    List<CommentDto> prepareCommentDtoData(){
         return Stream.of(prepareCommentDto_1(), prepareCommentDto_2())
                 .collect(Collectors.toList());
     }
@@ -229,6 +223,6 @@ class CommentServiceTest {
                 .description("description 2")
                 .createdOn(LocalDateTime.now())
                 .build();
-    }
+    }*/
 
 }

@@ -1,4 +1,4 @@
-package pl.tkaras.carworkshopwebservice.services;
+package pl.tkaras.carworkshopwebservice.UnitTests.services;
 
 import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,12 +8,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pl.tkaras.carworkshopwebservice.exceptions.AppUserNotFoundException;
 import pl.tkaras.carworkshopwebservice.exceptions.CarNotFoundException;
-import pl.tkaras.carworkshopwebservice.models.dtos.CarDto;
 import pl.tkaras.carworkshopwebservice.models.entities.AppUser;
 import pl.tkaras.carworkshopwebservice.models.entities.Car;
-import pl.tkaras.carworkshopwebservice.models.mappers.impl.CarDtoMapper;
 import pl.tkaras.carworkshopwebservice.repositories.CarRepository;
+import pl.tkaras.carworkshopwebservice.services.CarService;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,15 +35,11 @@ class CarServiceTest {
     private CarRepository carRepository;
     @Mock
     private CarService carService;
-    @Mock
-    private CarDtoMapper carDtoMapper;
 
     @BeforeEach
     void init(){
         carRepository = mock(CarRepository.class);
-        carDtoMapper = new CarDtoMapper();
-
-        carService = new CarService(carRepository, carDtoMapper);
+        carService = new CarService(carRepository);
     }
 
     @Test
@@ -52,10 +48,10 @@ class CarServiceTest {
         when(carRepository.findAll()).thenReturn(prepareCarData());
 
         //when
-        List<CarDto> carDtos = carService.gelAllCars();
+        List<Car> cars = carService.gelAllCars();
 
         //then
-        assertEquals(prepareCarDtoData().size(), carDtos.size());
+        assertEquals(prepareCarData().size(), cars.size());
     }
 
     @Test
@@ -64,25 +60,24 @@ class CarServiceTest {
         when(carRepository.findAll()).thenReturn(new ArrayList<>());
 
         //when
-        List<CarDto> carDtos = carService.gelAllCars();
+        List<Car> cars = carService.gelAllCars();
 
         //then
-        assertEquals(new ArrayList<>(), carDtos);
+        assertEquals(new ArrayList<>(), cars);
     }
 
     @Test
     void shouldReturnAllCarsByUsernameIfExist() {
         //given
         when(carRepository.findByUsername(anyString())).thenReturn(Optional.of(prepareCar1().getAppUser()));
-        //when(carRepository.findAllByAppUserId(anyLong())).thenReturn(prepareCarData());
-        when(carRepository.findAllByAppUserId(null)).thenReturn(prepareCarData());
+        when(carRepository.findAllByAppUserId(anyLong())).thenReturn(prepareCarData());
 
         //when
-        List<CarDto> carDtos = carService.gelAllCarsByUsername(prepareCar1().getAppUser().getUsername());
+        List<Car> cars = carService.gelAllCarsByUsername(prepareCar1().getAppUser().getUsername());
 
         //then
-        assertNotNull(carDtos);
-        assertEquals(prepareCarDtoData().size(), carDtos.size());
+        assertNotNull(cars);
+        assertEquals(prepareCarData().size(), cars.size());
     }
 
     @Test
@@ -105,11 +100,11 @@ class CarServiceTest {
         when(carRepository.findById(anyLong())).thenReturn(Optional.of(prepareCar1()));
 
         //when
-        Optional<CarDto> carDto = carService.getCar(prepareCar1().getId());
+        Car car = carService.getCar(prepareCar1().getId());
 
         //then
-        assertNotNull(carDto);
-        assertEquals(prepareCarDto_1().getUsername(), carDto.orElseThrow().getUsername());
+        assertNotNull(car);
+        assertEquals(prepareCar1().getAppUser().getUsername(), car.getAppUser().getUsername());
     }
 
     @Test
@@ -129,14 +124,17 @@ class CarServiceTest {
     @Test
     void shouldAddCarIfAppUserExist (){
         //given
+        when(carRepository.findByUsername(anyString())).thenReturn(Optional.of(prepareCar1().getAppUser()));
         when(carRepository.save(any())).thenReturn(prepareCar1());
-        when(carRepository.findByUsername(any())).thenReturn(Optional.of(prepareCar1().getAppUser()));
 
         //when
-        CarDto carDto = carService.addCar(prepareCarDto_1());
+        Car car = carService.addCar(prepareCar1());
 
         //then
-        assertEquals(prepareCarDto_1().getUsername(), carDto.getUsername());
+        assertEquals(prepareCar1().getMark(), car.getMark());
+        assertEquals(prepareCar1().getModel(), car.getModel());
+        assertEquals(prepareCar1().getPrice(), car.getPrice());
+        assertEquals(prepareCar1().getImageUrl(), car.getImageUrl());
     }
 
     @Test
@@ -145,7 +143,7 @@ class CarServiceTest {
         when(carRepository.findByUsername(any())).thenReturn(Optional.empty());
 
         //when
-        var exception = AssertionsForClassTypes.catchThrowable(() -> carService.addCar(prepareCarDto_1()));
+        var exception = AssertionsForClassTypes.catchThrowable(() -> carService.addCar(prepareCar1()));
 
         //then
         assertThat(exception)
@@ -157,22 +155,25 @@ class CarServiceTest {
     void shouldUpdateCarIfExist(){
         //given
         when(carRepository.findById(anyLong())).thenReturn(Optional.of(prepareCar1()));
-        when(carRepository.save(any())).thenReturn(prepareCar1());
+        when(carRepository.save(any())).thenReturn(prepareCar2());
 
         //when
-        CarDto cardto = carService.updateCar(prepareCarDto_1().getId(),prepareCarDto_1());
+        Car car = carService.updateCar(prepareCar1().getId(),prepareCar2());
 
         //then
-        assertEquals(prepareCarDto_1().getUsername(), cardto.getUsername());
+        assertEquals(prepareCar2().getMark(), car.getMark());
+        assertEquals(prepareCar2().getModel(), car.getModel());
+        assertEquals(prepareCar2().getPrice(), car.getPrice());
+        assertEquals(prepareCar2().getImageUrl(), car.getImageUrl());
     }
 
     @Test
-    void shouldThrowExceptionWhenUpdateCarAndCarNotExist(){
+    void shouldThrowExceptionWhenUpdateCarAndCarNotExists(){
         //given
         when(carRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         //when
-        var exception = AssertionsForClassTypes.catchThrowable(() -> carService.updateCar(prepareCarDto_1().getId(),prepareCarDto_1()));
+        var exception = AssertionsForClassTypes.catchThrowable(() -> carService.updateCar(prepareCar1().getId(),prepareCar1()));
 
         //then
         assertThat(exception)
@@ -187,14 +188,15 @@ class CarServiceTest {
 
     AppUser prepareAppUser_1(){
         return AppUser.builder()
+                .id(1L)
                 .username("client 1")
                 .password("password")
                 .email("client1@gmail.com")
-                .firstname("Jan")
-                .lastname("Kowalski")
-                .street("Kosciuszki")
-                .zipCode("50-555")
-                .city("Wroclaw")
+                .role("USER")
+                .isAccountNonExpired(true)
+                .isAccountNonLocked(true)
+                .isCredentialsNonExpired(true)
+                .isEnabled(true)
                 .build();
     }
 
@@ -204,7 +206,8 @@ class CarServiceTest {
                 .appUser(prepareAppUser_1())
                 .mark("Fiat")
                 .model("125P")
-                .description("description 1")
+                .price(BigDecimal.valueOf(10000))
+                .imageUrl("http://image_1.pl")
                 .createdOn(LocalDateTime.now())
                 .updatedOn(LocalDateTime.now())
                 .build();
@@ -216,7 +219,8 @@ class CarServiceTest {
                 .appUser(prepareAppUser_1())
                 .mark("Renault")
                 .model("Megan")
-                .description("description 2")
+                .price(BigDecimal.valueOf(20000))
+                .imageUrl("http://image_2.pl")
                 .createdOn(LocalDateTime.now())
                 .updatedOn(LocalDateTime.now())
                 .build();
@@ -228,45 +232,10 @@ class CarServiceTest {
                 .appUser(prepareAppUser_1())
                 .mark("Subaru")
                 .model("xv")
-                .description("description 3")
+                .price(BigDecimal.valueOf(30000))
+                .imageUrl("http://image_3.pl")
                 .createdOn(LocalDateTime.now())
                 .updatedOn(LocalDateTime.now())
                 .build();
     }
-
-    private List<CarDto> prepareCarDtoData(){
-        return Stream.of(prepareCarDto_1(), prepareCarDto_2(), prepareCarDto_3())
-                .collect(Collectors.toList());
-    }
-
-    private CarDto prepareCarDto_1(){
-        return CarDto.builder()
-                .id(1L)
-                .username(prepareAppUser_1().getUsername())
-                .mark("Fiat")
-                .model("125P")
-                .description("description 1")
-                .build();
-    }
-
-    private CarDto prepareCarDto_2(){
-        return CarDto.builder()
-                .id(2L)
-                .username(prepareAppUser_1().getUsername())
-                .mark("Renault")
-                .model("Megan")
-                .description("description 2")
-                .build();
-    }
-
-    private CarDto prepareCarDto_3(){
-        return CarDto.builder()
-                .id(3L)
-                .username(prepareAppUser_1().getUsername())
-                .mark("Subaru")
-                .model("xv")
-                .description("description 3")
-                .build();
-    }
-
 }
