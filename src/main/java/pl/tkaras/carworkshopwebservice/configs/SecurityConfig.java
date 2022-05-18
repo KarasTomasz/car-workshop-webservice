@@ -36,7 +36,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager(), jwtUtils))
                 .addFilterAfter(new JwtTokenVerifier(jwtUtils), JwtUsernameAndPasswordAuthenticationFilter.class)
                 .authorizeRequests()
-                .antMatchers("/", "/api/v1/user/registration", "/api/v1/user/confirm", "/login","api/v1/auth/login", "/api/v1/auth/**")
+                .antMatchers("/", "/api/v1/auth/registration", "/api/v1/auth/confirm", "api/v1/auth/login", "/login", "/api/v1/auth/**")
                     .permitAll()
                 .antMatchers("/swagger-ui.html", "/v2/api-docs", "/webjars/**", "/swagger-resources/**")
                     .permitAll()
