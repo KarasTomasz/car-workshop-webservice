@@ -1,4 +1,4 @@
-package pl.tkaras.carworkshopwebservice.controllers;
+package pl.tkaras.carworkshopwebservice.IntegrationTests;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
